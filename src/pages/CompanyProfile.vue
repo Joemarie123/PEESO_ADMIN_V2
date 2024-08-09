@@ -198,6 +198,8 @@ export default {
           [{ label: this.$q.lang.editor.defaultFont, icon: this.$q.iconSet.editor.font, fixedIcon: true, list: 'no-icons', options: ['default_font', 'arial', 'arial_black', 'comic_sans', 'courier_new', 'impact', 'lucida_grande', 'times_new_roman', 'verdana'] }],
           ['removeFormat'],
           ['unordered', 'ordered', 'outdent', 'indent'],
+          [{ label: this.$q.lang.editor.defaultFont, icon: this.$q.iconSet.editor.font, fixedIcon: true, list: 'no-icons', options: ['default_font', 'arial', 'arial_black', 'comic_sans', 'courier_new', 'impact', 'lucida_grande', 'times_new_roman', 'verdana'] }],
+
           ['undo', 'redo'],
         ];
       }
