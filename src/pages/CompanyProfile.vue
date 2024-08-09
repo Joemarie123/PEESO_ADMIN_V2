@@ -56,106 +56,25 @@
       <div style="margin: -35px; margin-left: 7px">
         <h5><b>ABOUT US</b></h5>
       </div>
-      <q-card style="width: 1800px">
-        <div class="q-pa-xs">
-          <q-editor
-            v-model="txtdescription"
-            :dense="$q.screen.lt.md"
-            :toolbar="[
-              [
-                {
-                  label: $q.lang.editor.align,
-                  icon: $q.iconSet.editor.align,
-                  fixedLabel: true,
-                  list: 'only-icons',
-                  options: ['left', 'center', 'right', 'justify'],
-                },
-                /*  {
-                          label: $q.lang.editor.align,
-                          icon: $q.iconSet.editor.align,
-                          fixedLabel: true,
-                          options: ['left', 'center', 'right', 'justify'],
-                        }, */
-              ],
-              [
-                'bold',
-                'italic',
-                /*    'strike', */
-                'underline',
-                'subscript',
-                /*  'superscript', */
-              ],
-              /*   ['token', 'hr', 'link', 'custom_btn'], */
-              /*  ['print', 'fullscreen'], */
-              [
-                {
-                  /*  label: $q.lang.editor.formatting, */
-                  /*   icon: $q.iconSet.editor.formatting, */
-                  /*   list: 'no-icons',
-                          options: [
-                            'p',
-                            'h1',
-                            'h2',
-                            'h3',
-                            'h4',
-                            'h5',
-                            'h6',
-                            'code',
-                          ], */
-                },
-                {
-                  label: $q.lang.editor.fontSize,
-                  icon: $q.iconSet.editor.fontSize,
-                  fixedLabel: true,
-                  fixedIcon: true,
-                  list: 'no-icons',
-                  options: [
-                    'size-1',
-                    'size-2',
-                    'size-3',
-                    'size-4',
-                    'size-5',
-                    'size-6',
-                    'size-7',
-                  ],
-                },
-                {
-                  label: $q.lang.editor.defaultFont,
-                  icon: $q.iconSet.editor.font,
-                  fixedIcon: true,
-                  list: 'no-icons',
-                  options: [
-                    'default_font',
-                    'arial',
-                    'arial_black',
-                    'comic_sans',
-                    'courier_new',
-                    'impact',
-                    'lucida_grande',
-                    'times_new_roman',
-                    'verdana',
-                  ],
-                },
-                'removeFormat',
-              ],
-              ['unordered', 'ordered', 'outdent', 'indent'],
-
-              ['undo', 'redo'],
-              /* ['viewsource'], */
-            ]"
-            :fonts="{
-              arial: 'Arial',
-              arial_black: 'Arial Black',
-              comic_sans: 'Comic Sans MS',
-              courier_new: 'Courier New',
-              impact: 'Impact',
-              lucida_grande: 'Lucida Grande',
-              times_new_roman: 'Times New Roman',
-              verdana: 'Verdana',
-            }"
-          />
-        </div>
-      </q-card>
+      <q-card class="about-us-card custom-card">
+  <div class="q-pa-xs">
+    <q-editor
+      v-model="txtdescription"
+      :dense="$q.screen.lt.md"
+      :toolbar="toolbarOptions"
+      :fonts="{
+        arial: 'Arial',
+        arial_black: 'Arial Black',
+        comic_sans: 'Comic Sans MS',
+        courier_new: 'Courier New',
+        impact: 'Impact',
+        lucida_grande: 'Lucida Grande',
+        times_new_roman: 'Times New Roman',
+        verdana: 'Verdana',
+      }"
+    />
+  </div>
+</q-card>
     </div>
   </q-page>
 </template>
@@ -252,6 +171,38 @@ export default {
       }
     },
   },
+  computed: {
+    toolbarOptions() {
+      if (this.$q.screen.lt.sm) {
+        // Toolbar options for small screens
+        return [
+          ['bold', 'italic', 'underline'],
+          [{ label: this.$q.lang.editor.align, icon: this.$q.iconSet.editor.align, fixedLabel: true, list: 'only-icons', options: ['left', 'center', 'right', 'justify'] }],
+          ['undo', 'redo'],
+        ];
+      } else if (this.$q.screen.lt.md) {
+        // Toolbar options for medium screens
+        return [
+          [{ label: this.$q.lang.editor.align, icon: this.$q.iconSet.editor.align, fixedLabel: true, list: 'only-icons', options: ['left', 'center', 'right', 'justify'] }],
+          ['bold', 'italic', 'underline'],
+          [{ label: this.$q.lang.editor.fontSize, icon: this.$q.iconSet.editor.fontSize, fixedLabel: true, fixedIcon: true, list: 'no-icons', options: ['size-1', 'size-2', 'size-3', 'size-4', 'size-5', 'size-6', 'size-7'] }],
+          ['undo', 'redo'],
+        ];
+      } 
+      else {
+        // Toolbar options for large screens
+        return [
+          [{ label: this.$q.lang.editor.align, icon: this.$q.iconSet.editor.align, fixedLabel: true, list: 'only-icons', options: ['left', 'center', 'right', 'justify'] }],
+          ['bold', 'italic', 'underline', 'subscript'],
+          [{ label: this.$q.lang.editor.fontSize, icon: this.$q.iconSet.editor.fontSize, fixedLabel: true, fixedIcon: true, list: 'no-icons', options: ['size-1', 'size-2', 'size-3', 'size-4', 'size-5', 'size-6', 'size-7'] }],
+          [{ label: this.$q.lang.editor.defaultFont, icon: this.$q.iconSet.editor.font, fixedIcon: true, list: 'no-icons', options: ['default_font', 'arial', 'arial_black', 'comic_sans', 'courier_new', 'impact', 'lucida_grande', 'times_new_roman', 'verdana'] }],
+          ['removeFormat'],
+          ['unordered', 'ordered', 'outdent', 'indent'],
+          ['undo', 'redo'],
+        ];
+      }
+    },
+  },
 };
 </script>
 
@@ -304,4 +255,10 @@ export default {
 .profile-picture-upload-input {
   display: none;
 }
+
+.about-us-card{
+  width: 1800px;
+}
+
+
 </style>
