@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       <!-- Top Left Side Toolbar  -->
-      <div class="col-xl-4 col-lg-3 col-md-5 col-sm-5 col-xs-12">
+      <div class="col-xl-5 col-lg-5 col-md-5 col-sm-5 col-xs-12">
         <div>
           <!--    <q-tabs v-model="tab" class=""> -->
           <!-- <q-chip
@@ -14,7 +14,7 @@
           >
             <q-btn color="blue" flat rounded size="14px" label="JOB POSTING" />
           </q-chip> -->
-          <div class="row q-mt-md q-ml-lg">
+          <div class="row q-mt-lg q-ml-lg">
             <q-btn
               outline
               size="12px"
@@ -35,7 +35,7 @@
 
           <!-- Left Side Job Post -->
           <div class="q-gutter-y-sm q-pl-lg q-pr-md">
-            <div style="margin-top: 28px">
+            <div style="margin-top: 35px">
               <div class="scrollable-container">
                 <div class="q-gutter-md">
                   <q-card
@@ -64,7 +64,7 @@
                             </div>
                           </div>
                         </q-card-section>
-                        <q-card-section class="row items-center">
+                        <q-card-section class="row items-center" style="margin-top: -18px">
                           <div class="circle-icon-reject">
                             <q-icon
                               name="close"
@@ -94,25 +94,29 @@
                           </div>
                         </q-card-section>
                       </div>
-                      <div class="col-5" style="margin-top: -8px">
+                      <div class="col-5" style="">
                         <q-card-section class="row items-center">
-                          <div>
+                          <div class="row no-wrap items-center">
                             <div
-                              class="text-h6 q-mt-md"
-                              style="font-size: 13px; font-weight: 400; line-height: 1.2;"
+                              class="text-h6"
+                              style="
+                                font-size: 13px;
+                                font-weight: 400;
+                                line-height: 1.2;
+                              "
                             >
-                              Total Vacant Count
+                            Total Vacant Count
                             </div>
                             <div
-                              class="text-subtitle2"
-                              style=""
+                              class="text-subtitle2 yellowgold q-ml-sm"
+                              style="font-weight: bold;"
                             >
-                              {{ jobPost.Total_Vacant_Count }}
+                            {{ jobPost.Total_Vacant_Count }}
                             </div>
                           </div>
                         </q-card-section>
                         <q-card-section class="row items-center">
-                          <div>
+                          <div class="row no-wrap items-center">
                             <div
                               class="text-h6"
                               style="
@@ -124,15 +128,16 @@
                               Total Applied
                             </div>
                             <div
-                              class="text-subtitle2 yellowgold"
-                              style=""
+                              class="text-subtitle2 yellowgold q-ml-sm"
+                              style="font-weight: bold;"
                             >
                               {{ jobPost.Total_Applied }}
                             </div>
                           </div>
                         </q-card-section>
+
                         <q-card-section class="row items-center">
-                          <div>
+                          <div class="row no-wrap items-center">
                             <div
                               class="text-h6"
                               style="
@@ -141,13 +146,13 @@
                                 line-height: 1.2;
                               "
                             >
-                              Total Hired
+                            Total Hired
                             </div>
                             <div
-                              class="text-subtitle2"
-                              style=""
+                              class="text-subtitle2 yellowgold q-ml-sm"
+                              style="font-weight: bold;"
                             >
-                              {{ jobPost.Total_Hired }}
+                            {{ jobPost.Total_Hired }}
                             </div>
                           </div>
                         </q-card-section>
@@ -190,9 +195,9 @@
       </div>
 
       <!-- Top Right Side Toolbar -->
-      <div class="col-xl-8 col-lg-9 col-md-7 col-sm-7 col-xs-12">
+      <div class="col-xl-7 col-lg-7 col-md-7 col-sm-7 col-xs-12">
         <div>
-          <q-tabs v-model="tab" class="q-mt-md">
+          <q-tabs v-model="tab" class="q-mt-lg">
             <q-chip
               clickable
               outline
@@ -228,7 +233,7 @@
           </q-tabs>
 
           <!-- Right Side Jop Post -->
-          <div class="q-gutter-y-sm" style="margin-top: -12px">
+          <div class="q-gutter-y-sm">
             <q-tab-panels v-model="tab" animated class="text-left">
               <q-tab-panel name="receievedcvs">
                 <q-page class="flex flex-center q-pa-md">
@@ -240,7 +245,7 @@
                         class="q-mb-md custom-card"
                       >
                         <div class="row">
-                          <div class="col-3">
+                          <div class="col-6">
                             <q-card-section class="row items-center">
                               <q-avatar size="53px" class="q-mr-sm">
                                 <img :src="user.avatar" alt="Profile Picture" />
@@ -296,7 +301,7 @@
                               </div>
                             </q-card-section>
                           </div>
-                          <div class="col-3">
+                          <!-- <div class="col-3">
                             <q-card-section class="row items-center">
                               <div>
                                 <div
@@ -313,11 +318,11 @@
                                 </div>
                               </div>
                             </q-card-section>
-                          </div>
+                          </div> -->
                         </div>
 
                         <div class="row">
-                          <div class="col-lg-7 col-xl-7">
+                          <div class="col-lg-6 col-xl-6">
                             <br/>
                             <q-card-section
                               class="row items-center"
@@ -341,16 +346,15 @@
                                   class="q-ml-xs custom-icon-class"
                                 />
                               </div>
-                              <div>
-                                <div
-                                class="text-subtitle2">
+                              <div >
+                                <div class="text-subtitle2">
                                   Applied Position / {{ user.AppliedPosition }}
                                 </div>
                               </div>
                             </q-card-section>
                           </div>
                           <div
-                            class="col-lg-5 col-xl-4"
+                            class="col-lg-6 col-xl-6"
                             style="margin-top: 8px"
                           >
                             <div class="q-gutter-sm">
@@ -585,6 +589,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .textbox {
   padding: 10px;
