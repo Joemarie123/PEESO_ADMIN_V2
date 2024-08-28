@@ -800,77 +800,78 @@ export default defineComponent({
         this.errors.txtjobtitle = "Please Fill up Job Title";
         valid = false;
       }
-
+      console.log("before save1", valid);
       if (!this.txtsalary) {
         this.errors.txtsalary = "Please Fill up Salary Expected";
         valid = false;
       }
-
+      console.log("before save2", valid);
       if (!this.txtvacantcount) {
         this.errors.txtvacantcount = "Please Fill up Vacant Count";
         valid = false;
       }
-
+      console.log("before save3", valid);
       if (!this.txtdate_from) {
         this.errors.txtdate_from = "Please Fill Date From";
         valid = false;
       }
-
+      console.log("before save4".valid);
       if (!this.txtdate_to) {
         this.errors.txtdate_to = "Please Fill up Date To";
         valid = false;
       }
-
+      console.log("before save5", valid);
       if (!this.txtnumber_hours) {
         this.errors.txtnumber_hours = "Please Fill up Number of Hours";
         valid = false;
       }
-
+      console.log("before save6", valid);
       if (!this.txtnatureofWork) {
         this.errors.txtnatureofWork = "Please Fill up Nature of Work";
         valid = false;
       }
-
+      console.log("before save7", valid);
       if (!this.txteducation_Level) {
         this.errors.txteducation_Level = "Please Fill up Educational Level";
         valid = false;
       }
-
+      console.log("before save8", valid);
       if (!this.txtcourse) {
         this.errors.txtcourse = "Please Fill up Course";
         valid = false;
       }
-
+      console.log("before save9", valid);
       if (!this.txtworkexperience) {
         this.errors.txtworkexperience = "Please Fill up Experience";
         valid = false;
       }
-
+      console.log("before save1o", valid);
       if (!this.txtlicense) {
         this.errors.txtlicense = "Please Fill up License Required";
         valid = false;
       }
-
+      console.log("before save11", valid);
       if (!this.txtplaceofwork) {
         this.errors.txtplaceofwork = "Please Fill up Place of Work";
         valid = false;
       }
-
+      console.log("before save12", valid);
       if (!this.txtdescription) {
         this.errors.txtdescription = "Please Fill up Description";
         valid = false;
       }
-
-      if (!this.txtaddtags) {
+      console.log("before save13", valid);
+      /*  if (!this.txtaddtags) {
         this.errors.txtaddtags = "Please Fill up Tags";
         valid = false;
-      }
+      } */
 
+      console.log("before save14", this.txtaddtags);
       if (!this.file) {
         this.errors.file = "Please Choose Job Profile";
         valid = false;
       }
-
+      console.log("before save15", valid);
       if (valid) {
         /*  this.Loading(); */
         this.ClickMe_SavetoDatabase();
@@ -882,12 +883,14 @@ export default defineComponent({
         console.error("User data is not available.");
         return;
       } */
+      console.log("before2 save");
       const store = useJobpost();
       let data = new FormData();
       data.append("Title", this.txtjobtitle);
       if (this.file) {
         data.append("file", this.file);
       }
+      console.log("before3 save");
       data.append("Salary", this.txtsalary);
       data.append("DateFrom", this.txtdate_from);
       data.append("DateTo", this.txtdate_to);
@@ -902,7 +905,7 @@ export default defineComponent({
       data.append("License", this.txtlicense);
       data.append("Company_ID", this.userData.ID);
       data.append("tags", JSON.stringify(this.items));
-
+      console.log("before save");
       store.SaveToDatabase_jobPost(data).then((res) => {
         console.log("Response from Save to Database:", res);
         this.showsuccessfulldialog();

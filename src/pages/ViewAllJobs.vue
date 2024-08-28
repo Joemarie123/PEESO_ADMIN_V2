@@ -7,7 +7,7 @@
       <q-card>
         <q-card-section>
           <div class="row items-center justify-start">
-            <p style="font-size: 12px; margin-left: 5px">SOFTWARE DEVELOPER</p>
+            <p style="font-size: 12px; margin-left: 5px">{{ Pass_title }}</p>
           </div>
           <q-date dense v-model="date" mask="YYYY-MM-DD" />
         </q-card-section>
@@ -38,6 +38,7 @@
                 rounded
                 color="blue"
                 label="SUBMIT"
+                @click="Click_Submit_SetAppointment"
               />
             </div>
 
@@ -91,7 +92,7 @@
               <div class="scrollable-container">
                 <div class="q-gutter-md">
                   <q-card
-                    v-for="jobPost in Data_Retrieved.data"
+                    v-for="jobPost in filteredJobPosts"
                     :key="jobPost.ID"
                     :class="[
                       'q-mb-md',
@@ -311,10 +312,20 @@
             </q-chip>
 
             <input
-              v-model="search_jobpost"
+              v-if="tab == 'receievedcvs'"
+              v-model="search_applicant"
               class="textbox"
               placeholder="Search Applicant"
             />
+
+            <!-- Conditionally render search input for "POTENTIAL APPLICANT" -->
+            <input
+              v-if="tab == 'shortlisted'"
+              v-model="search_potentialApplicant"
+              class="textbox"
+              placeholder="Search Potential Applicant"
+            />
+
             <!--  <q-chip
           clickable
           outline
@@ -333,7 +344,7 @@
                   <div class="scrollable-container">
                     <div class="q-gutter-md">
                       <q-card
-                        v-for="user in GetJobPosting"
+                        v-for="user in filteredJobApplicant"
                         :key="user.id"
                         class="q-mb-md custom-card"
                       >
@@ -499,7 +510,7 @@
                   <div class="scrollable-container">
                     <div class="q-gutter-md">
                       <q-card
-                        v-for="potential in Potential_Applicant"
+                        v-for="potential in filteredJob_Potential_Applicant"
                         :key="potential.id"
                         class="q-mb-md custom-card_Shortlisted"
                       >
@@ -508,7 +519,11 @@
                             <q-card-section class="row items-center">
                               <q-avatar size="53px" class="q-mr-sm">
                                 <img
-                                  src="public/TagumLogo.png"
+                                  :src="
+                                    potential.pic
+                                      ? potential.pic
+                                      : 'public/defaultpic.jpg'
+                                  "
                                   alt="Profile Picture"
                                 />
                               </q-avatar>
@@ -643,7 +658,7 @@
                                 label="Reject"
                               /> -->
                               <q-btn
-                                @click="schedule_Dialog"
+                                @click="schedule_Dialog(potential)"
                                 class="glossy"
                                 size="12px"
                                 rounded
@@ -694,13 +709,21 @@ export default {
       applyToAll: false,
       dialog_sched: false,
       search_jobpost: "",
+      search_applicant: "",
+      search_potentialApplicant: "",
+
       jobPosts: [],
       page: 1,
       limit: 10,
       hasMore: true,
       loading: false,
       userData: null, // Initialize userData
-      Data_Retrieved: [],
+      /*     Data_Retrieved: [], */
+
+      Data_Retrieved: {
+        data: [], // Ensure it's always an array, even if empty
+      },
+
       users: [],
       page_1: 1,
       limit_1: 10, // Number of records per request
@@ -710,14 +733,36 @@ export default {
       GetJobPosting: [],
       UpdateAplikante: [],
       Potential_Applicant: [],
+      SetAppointment_ME: [],
+      Pass_JOBID: "",
+      Pass_ApplicantID: "",
+      Pass_title: "",
+      allRecords: [], // Define the array to hold all the records
     };
   },
 
   computed: {
+    filteredJob_Potential_Applicant() {
+      return this.Potential_Applicant.filter((potential) => {
+        const SearhOverAll =
+          `${potential.Firstname} ${potential.Surname} ${potential.Address} ${potential.title}`.toLowerCase();
+        return SearhOverAll.includes(
+          this.search_potentialApplicant.toLowerCase()
+        );
+      });
+    },
+
+    filteredJobApplicant() {
+      return this.GetJobPosting.filter((user) => {
+        const fullName =
+          `${user.Firstname} ${user.Surname} ${user.Address} ${user.title}`.toLowerCase();
+        return fullName.includes(this.search_applicant.toLowerCase());
+      });
+    },
+
     filteredJobPosts() {
-      const searchTerm = this.search_jobpost.toLowerCase();
-      return this.Data_Retrieved.filter((jobPost) =>
-        jobPost.Position_Title.toLowerCase().includes(searchTerm)
+      return this.Data_Retrieved.data.filter((jobPost) =>
+        jobPost.Title.toLowerCase().includes(this.search_jobpost.toLowerCase())
       );
     },
 
@@ -734,7 +779,36 @@ export default {
   beforeUnmount() {
     window.removeEventListener("resize", this.updateScreenWidth);
   },
+
   methods: {
+    Click_Submit_SetAppointment() {
+      const store = useJobpost();
+      if (this.applyToAll) {
+        for (const item of this.Potential_Applicant) {
+          let data = new FormData();
+          data.append("JobID", this.Pass_JOBID);
+          data.append("ApplicantID", item.PMID);
+          data.append("Appointment_date", this.date);
+          data.append("Appointment_time", this.time);
+          store.Set_Appointment_Store(data);
+        }
+        this.SuccessfullyAppoint();
+        this.dialog_sched = false;
+      } else {
+        let data = new FormData();
+        data.append("JobID", this.Pass_JOBID);
+        data.append("ApplicantID", this.Pass_ApplicantID);
+        data.append("Appointment_date", this.date);
+        data.append("Appointment_time", this.time);
+
+        store.Set_Appointment_Store(data).then((res) => {
+          this.SetAppointment_ME = store.SetAppointment_Array;
+          this.SuccessfullyAppoint();
+          this.dialog_sched = false;
+        });
+      }
+    },
+
     handleRowClick(jobPost) {
       console.log("Job Post Clicked:", jobPost.ID);
       this.activeCard = jobPost.ID;
@@ -755,7 +829,7 @@ export default {
           }
 
           this.GetJobPosting = store.GetJobs_Array.filter(
-            (job) => job.status === "APPLIED"
+            (job) => job.status == "APPLIED"
           );
           console.log(
             "Filtered GetJobPosting (APPLIED only):",
@@ -783,7 +857,7 @@ export default {
           }
 
           this.Potential_Applicant = store3.PotentialApplicant_Array.filter(
-            (job) => job.status === "ACCEPTED"
+            (job) => job.status == "ACCEPTED"
           );
 
           console.log(
@@ -957,7 +1031,13 @@ export default {
       this.$router.push(page);
     },
 
-    schedule_Dialog() {
+    schedule_Dialog(potential) {
+      console.log("Schedule Dialog", potential);
+
+      this.Pass_JOBID = potential.jobID;
+      this.Pass_ApplicantID = potential.PMID;
+      this.Pass_title = potential.title;
+
       this.dialog_sched = true;
     },
   },
@@ -1110,6 +1190,16 @@ export default {
           timeout: "1500",
         });
       },
+
+      SuccessfullyAppoint() {
+        $q.notify({
+          icon: "star",
+          color: "green",
+          message: "Successfully Appoint",
+          position: "center",
+          timeout: "1500",
+        });
+      },
     };
   },
 };
@@ -1125,7 +1215,7 @@ export default {
   border: 1px solid rgba(90, 92, 91, 0.799);
   border-radius: 13px;
 
-  width: 320px;
+  width: 240px;
   height: 28px;
 }
 

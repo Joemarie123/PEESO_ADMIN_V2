@@ -8,11 +8,29 @@ export const useJobpost = defineStore("JobPostStore", {
     GetJobs_Array: [],
     UpdateApplicant_Array: [],
     PotentialApplicant_Array: [],
+    SetAppointment_Array: [],
+
+    /*  selectedJobID: 0,  */
   }),
   getters: {
     // doubleCount: (state) => state.counter * 2,
   },
   actions: {
+    /*  setSelectedJobID(jobID) {
+      this.selectedJobID = jobID;
+      console.log("State JOB ID", this.selectedJobID);
+    }, */
+
+    async Set_Appointment_Store(payload) {
+      // `http://10.0.1.26:82/HRPORTAL/login.php`
+      let res = await axios.post(
+        `http://10.0.1.26:82/peesoportal/Appointment/admin/SetAppointment.php`,
+        payload
+      );
+      this.SetAppointment_Array = res.data;
+      console.log("Set Appointment Store", res.data);
+    },
+
     async SaveToDatabase_jobPost(payload) {
       // `http://10.0.1.26:82/HRPORTAL/login.php`
       let res = await axios.post(
@@ -26,7 +44,7 @@ export const useJobpost = defineStore("JobPostStore", {
     async Retrieve_Jobs(payload) {
       // `http://10.0.1.26:82/HRPORTAL/login.php`
       let res = await axios.post(
-        `http://10.0.1.26:82/peesoportal/jobs/admin/getjobs.php`,
+        `http://10.0.1.26:82/peesoportal/dashboard/admin/getjobs.php`,
         payload
       );
       this.RetrieveJobs_Array = res.data;

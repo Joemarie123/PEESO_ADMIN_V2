@@ -82,7 +82,7 @@ export const useLoginCheck = defineStore("SignUpAccouteStore", {
         payload
       );
       this.RetrievedData = res.data;
-      console.log("Retrieved Data", res.data);
+      /*  console.log("Retrieved Data", res.data); */
     },
   },
   persist: true,

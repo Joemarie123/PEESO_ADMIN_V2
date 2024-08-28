@@ -34,6 +34,7 @@
                 <div
                   v-if="computedEvent.event && computedEvent.event.details"
                   class="title q-calendar__ellipsis"
+                  @click="handDataclick(computedEvent)"
                 >
                   {{
                     computedEvent.event.title +
@@ -66,6 +67,10 @@ import "@quasar/quasar-ui-qcalendar/src/QCalendarVariables.sass";
 import "@quasar/quasar-ui-qcalendar/src/QCalendarTransitions.sass";
 import "@quasar/quasar-ui-qcalendar/src/QCalendarMonth.sass";
 import NavigationBar from "../components/NavigationBar.vue";
+import { useDashBoard } from "src/stores/DashBoard_Store";
+import { useLoginCheck } from "src/stores/SignUp_Store";
+import { useJobpost } from "src/stores/JobPost_Store";
+
 import { defineComponent } from "vue";
 
 // The function below is used to set up our demo data
@@ -86,112 +91,192 @@ export default defineComponent({
   data() {
     return {
       selectedDate: today(),
-      events: [
-        {
-          id: 1,
-          title: "Web Developer",
-          details:
-            "Everything is funny as long as it is happening to someone else",
-          start: getCurrentDay(1),
-          end: getCurrentDay(1),
-          bgcolor: "orange",
-        },
-        {
-          id: 2,
-          title: "Back End Developer",
-          details: "Buy a nice present",
-          start: getCurrentDay(4),
-          end: getCurrentDay(4),
-          bgcolor: "green",
-          icon: "fas fa-birthday-cake",
-        },
-        {
-          id: 3,
-          title: "Truck Driver",
-          details: "Time to pitch my idea to the company",
-          start: getCurrentDay(10),
-          end: getCurrentDay(10),
-          time: "10:00 ",
-          duration: 120,
-          bgcolor: "red",
-          icon: "fas fa-handshake",
-        },
-        {
-          id: 4,
-          title: "Sales Manager",
-          details: "Company is paying!",
-          start: getCurrentDay(10),
-          end: getCurrentDay(10),
-          time: "11:30",
-          duration: 90,
-          bgcolor: "teal",
-          icon: "fas fa-hamburger",
-        },
-        {
-          id: 5,
-          title: "Full Stack Developer",
-          details: "Always a nice chat with mom",
-          start: getCurrentDay(20),
-          end: getCurrentDay(20),
-          time: "17:00",
-          duration: 90,
-          bgcolor: "grey",
-          icon: "fas fa-car",
-        },
-        {
-          id: 6,
-          title: "Mobile App Developer",
-          details: "Teaching Javascript 101",
-          start: getCurrentDay(22),
-          end: getCurrentDay(22),
-          time: "08:00",
-          duration: 540,
-          bgcolor: "blue",
-          icon: "fas fa-chalkboard-teacher",
-        },
-        {
-          id: 7,
-          title: "Jeepney Driver",
-          details: "Meet GF for dinner at Swanky Restaurant",
-          start: getCurrentDay(22),
-          end: getCurrentDay(22),
-          time: "19:00",
-          duration: 180,
-          bgcolor: "teal",
-          icon: "fas fa-utensils",
-        },
-        {
-          id: 8,
-          title: "Data Encoder",
-          details: "Stay in shape!",
-          start: getCurrentDay(27),
-          end: getCurrentDay(28),
-          bgcolor: "purple",
-          icon: "rowing",
-        },
-        {
-          id: 9,
-          title: "Branch Manager",
-          details: "Time for some weekend R&R",
-          start: getCurrentDay(22),
-          end: getCurrentDay(29),
-          bgcolor: "purple",
-          icon: "fas fa-fish",
-        },
-        {
-          id: 10,
-          title: "Sales Executive",
-          details:
-            "Trails and hikes, going camping! Don't forget to bring bear spray!",
-          start: getCurrentDay(22),
-          end: getCurrentDay(29),
-          bgcolor: "purple",
-          icon: "fas fa-plane",
-        },
-      ],
+      search_jobpost: "",
+      jobPosts: [],
+      page: 1,
+      limit: 10,
+      hasMore: true,
+
+      dayName: "",
+      day: "",
+      monthName: "",
+      year: "",
+
+      Server_day: "",
+      Server_monthName: "",
+      Server_year: "",
+      Server_monthNumber: "",
+      time: "",
+
+      getAppointment_me: [],
+      GetDate_me: [],
+
+      events: [],
+
+      users: [],
+      page_1: 1,
+      limit_1: 10, // Number of records per request
+      hasMore_1: true, // To check if more data is available
+      loading_1: false, // To prevent multiple simultaneous requests
     };
   },
+
+  computed: {
+    filteredJobPosts() {
+      const searchTerm = this.search_jobpost.toLowerCase();
+      return this.jobPosts.filter((jobPost) =>
+        jobPost.Position_Title.toLowerCase().includes(searchTerm)
+      );
+    },
+  },
+
+  created() {
+    /*   console.log("Sample Array", this.events);
+     */
+    const store = useDashBoard();
+    store.Set_Appointment_Store().then((res) => {
+      this.serverdatetime = store.Server_Date_TIme;
+
+      // Extracting the date from the response
+      const serverDate = store.Server_Date_TIme.date;
+
+      // Create a new Date object from the server date
+      const dateObj = new Date(serverDate);
+
+      // Format the date into month name, day, and year
+      const options = { year: "numeric", month: "long", day: "numeric" };
+      const formattedDate = dateObj.toLocaleDateString("en-US", options);
+
+      // Split the formatted date into components
+      const [monthName, day, year] = formattedDate.split(" ");
+
+      // Get the month number (0-11) and add 1 to convert to 1-12
+      const monthNumber = dateObj.getMonth() + 1;
+
+      // Assign the values to your component's data properties
+      this.Server_monthName = monthName;
+      this.Server_day = day.replace(",", ""); // Remove the comma from the day
+      this.Server_year = year;
+      this.Server_monthNumber = monthNumber;
+
+      // You can now use this.monthName, this.day, this.year, and this.monthNumber in your template
+      console.log("Month Name", this.Server_monthName);
+      console.log("Day", this.Server_day);
+      console.log("Year", this.Server_year);
+      console.log("Month Number", this.Server_monthNumber);
+
+      this.retrievedLogin = localStorage.getItem("Login");
+      console.log("Retrieved Login Local Storage:", this.retrievedLogin);
+
+      if (!this.retrievedLogin) {
+        console.error("No login found in localStorage.");
+        return;
+      }
+
+      const store1 = useLoginCheck();
+      let data1 = new FormData();
+      data1.append("LoginID", this.retrievedLogin);
+
+      store1.RetrievedData_function(data1).then((res) => {
+        this.userinfo = store1.RetrievedData;
+
+        // Check if userinfo and the data array exist
+        if (
+          !this.userinfo ||
+          !this.userinfo.data ||
+          !this.userinfo.data.length
+        ) {
+          console.error("Invalid user info retrieved.");
+          return;
+        }
+
+        // Directly access the first element of the data array
+        this.userData = this.userinfo.data[0];
+        if (!this.userData) {
+          console.error("Invalid user info retrieved.");
+          return;
+        }
+
+        /*   console.log("Data Retrieved View ALl jobs:", this.userData); */
+
+        const store2 = useDashBoard();
+        let data2 = new FormData();
+        data2.append("CompanyID", this.userData.ID);
+        /*  console.log("CompanyID", this.userData.ID); */
+        data2.append("month", this.Server_monthNumber);
+        /*  console.log("month", this.Server_monthNumber); */
+        data2.append("year", this.Server_year);
+        this.events = [];
+        store2.GetAppointment_Store(data2).then((res) => {
+          this.getAppointment_me = store2.GetAppointment_Array.appointment;
+          this.GetDate_me = store2.GetAppointment_Array.data;
+          console.log("Response from Get Appointment:", this.getAppointment_me);
+          console.log("Response from Get  Data:", this.GetDate_me);
+          // Create a map to track unique Job_IDs
+          const jobIdMap = new Map();
+
+          this.getAppointment_me.forEach((event) => {
+            if (!jobIdMap.has(event.Job_ID)) {
+              // Add the event to the map if the Job_ID is not yet encountered
+              jobIdMap.set(event.Job_ID, {
+                id: event.ID,
+                title: event.title,
+                start: event.Appointment_date,
+                end: event.Appointment_date,
+                details: event.Appointment_time,
+                salary: event.salary,
+                Job_ID: event.Job_ID,
+                pic: event.pic,
+              });
+            }
+          });
+
+          // Convert the map values to an array and assign it to events
+          this.events = Array.from(jobIdMap.values());
+
+          console.log("new events=>", this.events);
+          /*
+            /*    console.log("Server_year", this.Server_year); */
+        });
+      });
+    });
+    setInterval(() => {
+      store.Set_Appointment_Store().then((res) => {
+        this.serverdatetime = store.Server_Date_TIme;
+
+        // Extracting the date from the response
+        const serverDate = store.Server_Date_TIme.date;
+
+        // Create a new Date object from the server date
+        const dateObj = new Date(serverDate);
+
+        // Format the date into month name, day, and year
+        const options = { year: "numeric", month: "long", day: "numeric" };
+        const formattedDate = dateObj.toLocaleDateString("en-US", options);
+
+        // Split the formatted date into components
+        const [monthName, day, year] = formattedDate.split(" ");
+
+        // Get the month number (0-11) and add 1 to convert to 1-12
+        const monthNumber = dateObj.getMonth() + 1;
+
+        // Assign the values to your component's data properties
+        this.Server_monthName = monthName;
+        this.Server_day = day.replace(",", ""); // Remove the comma from the day
+        this.Server_year = year;
+        this.Server_monthNumber = monthNumber;
+      });
+    }, 1000);
+  },
+
   methods: {
+    handDataclick(computedEvent) {
+      const jobID = computedEvent.event.Job_ID;
+      console.log("Event clicked:", jobID);
+
+      localStorage.setItem("jobID", jobID);
+    },
+
     getWeekEvents(week, weekdays) {
       const firstDay = parsed(week[0].date + " 00:00");
       const lastDay = parsed(week[week.length - 1].date + " 23:59");
@@ -269,8 +354,8 @@ export default defineComponent({
       if (computedEvent.event !== undefined) {
         return {
           "my-event": true,
-          "text-white": true,
-          [`bg-${computedEvent.event.bgcolor}`]: true,
+          "text-white": false,
+
           "rounded-border": true,
           "q-calendar__ellipsis": true,
         };

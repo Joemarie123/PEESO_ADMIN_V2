@@ -240,6 +240,7 @@
 </template>
 
 <script>
+
 import Schedule_Calendar from "../components/Schedule_Calendar.vue";
 import Scheduled_List from "../components/Scheduled_List.vue";
 import AOS from "aos";
@@ -256,17 +257,28 @@ export default {
       displayNumber_TotalJobs: 0,
       totalJobs: 453, // Replace with actual data
       totalApplicants: 1500, // Replace with actual data
+
+      getAppointment_me: [],
+      events: [],
+
+      dayName: "",
+      day: "",
+      monthName: "",
+      year: "",
+
+      Server_day: "",
+      Server_monthName: "",
+      Server_year: "",
+      Server_monthNumber: "",
+      time: "",
     };
   },
   components: {
     Schedule_Calendar,
     Scheduled_List,
   },
-  setup() {
-    return {
-      model: ref("2019-02-22 21:02"),
-    };
-  },
+ 
+
 
   methods: {
     schedule_Dialog() {
@@ -469,6 +481,4 @@ export default {
   border-radius: 8px;
   overflow: hidden;
 }
-
-
 </style>

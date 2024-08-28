@@ -1,13 +1,39 @@
 <template>
   <div class="row">
     <q-card-section class="columns items-center">
-      <p>Job Title: <b>Mobile App Developer</b></p>
-      <p style="margin-top: -15px">
-        Date Schedule: <b>July 27,2024 - 9:00 AM</b>
+      <!--  JOB ID: {{ jobID }} -->
+      <p>
+        Job Title:
+        <b>{{
+          filteredAppointments && filteredAppointments.length > 0
+            ? filteredAppointments[0].title
+            : "N/A"
+        }}</b>
       </p>
+
+      <p v-if="filteredAppointments" style="margin-top: -15px">
+        Date Schedule:
+        <b>
+          {{
+            filteredAppointments.length > 0
+              ? formatTime(filteredAppointments[0].Appointment_time)
+              : "N/A"
+          }}
+        </b>
+      </p>
+
+      <!--  <div v-for="appointment in filteredAppointments" :key="appointment.ID">
+        <h3>{{ appointment.title }}</h3>
+        <p>Salary: {{ appointment.salary }}</p>
+        <p>Applicant: {{ appointment.firstname }} {{ appointment.surname }}</p>
+        <img :src="appointment.pic" alt="Job Pic" />
+
+      </div> -->
     </q-card-section>
     <q-card-section class="columns items-center">
-      <p class="potentialapplicant">Potential Applicant <b>100</b></p>
+      <p class="potentialapplicant">
+        Potential Applicant <b>{{ filteredAppointments.length }}</b>
+      </p>
       <div style="margin-top: -13px">
         <input
           v-model="search_jobpost"
@@ -20,7 +46,7 @@
   <div class="scrollable-container custom_card_Shortlisted">
     <div class="q-gutter-md">
       <q-card
-        v-for="user in filteredApplicant"
+        v-for="user in filteredAppointments"
         :key="user.id"
         class="q-mb-md q-my-md custom-card_Shortlisted"
       >
@@ -28,23 +54,26 @@
           <div class="col-xl-6 col-lg-5 col-md-7 col-sm-6 col-xs-12">
             <q-card-section class="row items-center">
               <q-avatar size="53px" class="q-mr-sm">
-                <img :src="user.avatar" alt="Profile Picture" />
+                <img
+                  :src="user.pic ? user.pic : 'public/defaultpic.jpg'"
+                  alt="Profile Picture"
+                />
               </q-avatar>
               <div style="margin-top: -15px">
                 <div class="text-h6 namecolor">
-                  {{ user.firstName }}
+                  {{ user.firstname }}
                 </div>
 
                 <div class="text-subtitle2" style="margin-top: -8px">
                   <div>
                     <div class="text-subtitle2 namecolor">
-                      {{ user.lastName }}
+                      {{ user.surname }}
                     </div>
                   </div>
                 </div>
                 <div class="text-subtitle2" style="margin-top: -4px">
                   <div>
-                    <div class="text-subtitle2">0915487625</div>
+                    <div class="text-subtitle2">{{ user.contactno }}</div>
                   </div>
                 </div>
               </div>
@@ -157,19 +186,22 @@
 
         <q-separator />
       </q-card>
-      <q-infinite-scroll
+      <!--   <q-infinite-scroll
         :offset="100"
         @load="loadMoreUsers"
         :disable="!hasMore"
       >
         <q-spinner color="primary" />
-      </q-infinite-scroll>
+      </q-infinite-scroll> -->
     </div>
   </div>
 </template>
 
 <script>
 import { ref, onMounted } from "vue";
+import { useJobpost } from "src/stores/JobPost_Store";
+import { useDashBoard } from "src/stores/DashBoard_Store";
+import { useLoginCheck } from "src/stores/SignUp_Store";
 import axios from "axios";
 
 export default {
@@ -177,22 +209,66 @@ export default {
 
   data() {
     return {
+      potentialApplicant_Selected: [],
+      jobID: "", // Initialize jobID
       search_jobpost: "",
       jobPosts: [],
       page: 1,
       limit: 10,
       hasMore: true,
       loading: false,
-
+      Transfer_JOBID: "",
       users: [],
       page_1: 1,
       limit_1: 10, // Number of records per request
       hasMore_1: true, // To check if more data is available
       loading_1: false, // To prevent multiple simultaneous requests
+
+      dayName: "",
+      day: "",
+      monthName: "",
+      year: "",
+
+      Server_day: "",
+      Server_monthName: "",
+      Server_year: "",
+      Server_monthNumber: "",
+      time: "",
+      getAppointment_me: [],
+      events: [],
+
+      serverdatetime: [],
     };
   },
 
   computed: {
+    /*   selectedJobID() {
+      const jobStore = useJobpost();
+      return jobStore.selectedJobID;
+    }, */
+
+    filteredAppointments() {
+      const jobID = parseInt(this.jobID);
+      const searchQuery = this.search_jobpost.toLowerCase(); // Convert search input to lowercase for case-insensitive search
+
+      // Filter by Job_ID first
+      let filtered = this.potentialApplicant_Selected.filter(
+        (appointment) => appointment.Job_ID === jobID
+      );
+
+      // Further filter by search query
+      if (searchQuery) {
+        filtered = filtered.filter(
+          (appointment) =>
+            appointment.surname.toLowerCase().includes(searchQuery) || // Assuming 'Surname' is a field in your appointment object
+            appointment.firstname.toLowerCase().includes(searchQuery) // Assuming 'FirstName' is a field in your appointment object
+        );
+      }
+
+      console.log("Filtered Appointments:", filtered);
+      return filtered;
+    },
+
     filteredApplicant() {
       const searchTerm = this.search_jobpost.toLowerCase();
       return this.users.filter(
@@ -203,68 +279,198 @@ export default {
     },
   },
 
+  watch: {},
+
+  mounted() {
+    this.retrieveJobID();
+    this.startPolling();
+  },
+
+  beforeUnmount() {
+    this.stopPolling();
+  },
+
   methods: {
-    async loadMoreJobPosts() {
-      if (this.loading) return;
-      this.loading = true;
-
-      try {
-        const response = await axios.get(
-          `https://run.mocky.io/v3/5c4a6151-42bd-4c7e-809c-cec9084e0fcc`,
-          {
-            params: {
-              _page: this.page,
-              _limit: this.limit,
-            },
-          }
-        );
-        console.log("API Response:", response.data); // Log the response data
-        const newJobPosts = response.data.JobPost;
-
-        this.jobPosts = this.jobPosts.concat(newJobPosts);
-        this.page++;
-        this.hasMore = newJobPosts.length === this.limit;
-      } catch (error) {
-        console.error("Error fetching job posts:", error);
-      } finally {
-        this.loading = false;
-      }
+    formatTime(timeString) {
+      const [hours, minutes] = timeString.split(":").map(Number);
+      const period = hours >= 12 ? "PM" : "AM";
+      const formattedHours = hours % 12 || 12;
+      return `${formattedHours}:${minutes
+        .toString()
+        .padStart(2, "0")} ${period}`;
     },
 
-    async loadMoreUsers() {
-      if (this.loading1) return;
-      this.loading1 = true;
+    retrieveJobID() {
+      this.jobID = localStorage.getItem("jobID");
+      console.log("Retrieved jobID:", this.jobID);
+    },
 
-      try {
-        const response = await axios.get(
-          `https://joemarie123.github.io/Fake_API_Testing/users_sampe.json`,
-          {
-            params: {
-              _page: this.page_1,
-              _limit: this.limit_1,
-            },
-          }
-        );
-        console.log("kini", response.data); // Add this line to log the response data
-        // Extract the users array from the response
-        const newUsers = response.data.users;
+    startPolling() {
+      this.pollingInterval = setInterval(() => {
+        const newJobID = localStorage.getItem("jobID");
+        if (this.jobID !== newJobID) {
+          this.jobID = newJobID;
+          console.log("Updated jobID:", this.jobID);
+        }
+      }, 100); // Poll every second
+    },
 
-        this.users = this.users.concat(newUsers);
-        this.page++;
-        this.hasMore_1 = newUsers.length === this.limit;
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      } finally {
-        this.loading1 = false;
-      }
+    stopPolling() {
+      clearInterval(this.pollingInterval);
     },
   },
+  /*   created() {
+    const store_5 = useDashBoard();
+    let data_5 = new FormData();
+    data_5.append("CompanyID", "41");
+    data_5.append("month", "8");
+    data_5.append("year", "2024");
+    store_5.GetPotentialApplicant(data_5).then((res) => {
+      this.potentialApplicant_Selected = store_5.PotentialApplicant.appointment;
+      console.log("GET Potential:", this.potentialApplicant_Selected);
+    });
+  }, */
+
   created() {
-    this.loadMoreJobPosts();
-    this.loadMoreUsers();
+    console.log("Sample Array", this.events);
+
+    const store = useDashBoard();
+    store.Set_Appointment_Store().then((res) => {
+      this.serverdatetime = store.Server_Date_TIme;
+
+      // Extracting the date from the response
+      const serverDate = store.Server_Date_TIme.date;
+
+      // Create a new Date object from the server date
+      const dateObj = new Date(serverDate);
+
+      // Format the date into month name, day, and year
+      const options = { year: "numeric", month: "long", day: "numeric" };
+      const formattedDate = dateObj.toLocaleDateString("en-US", options);
+
+      // Split the formatted date into components
+      const [monthName, day, year] = formattedDate.split(" ");
+
+      // Get the month number (0-11) and add 1 to convert to 1-12
+      const monthNumber = dateObj.getMonth() + 1;
+
+      // Assign the values to your component's data properties
+      this.Server_monthName = monthName;
+      this.Server_day = day.replace(",", ""); // Remove the comma from the day
+      this.Server_year = year;
+      this.Server_monthNumber = monthNumber;
+
+      // You can now use this.monthName, this.day, this.year, and this.monthNumber in your template
+      /*    console.log("Month Name", this.Server_monthName);
+          console.log("Day", this.Server_day);
+          console.log("Year", this.Server_year);
+          console.log("Month Number", this.Server_monthNumber); */
+
+      this.retrievedLogin = localStorage.getItem("Login");
+      console.log("Retrieved Login Local Storage:", this.retrievedLogin);
+
+      if (!this.retrievedLogin) {
+        console.error("No login found in localStorage.");
+        return;
+      }
+
+      const store1 = useLoginCheck();
+      let data1 = new FormData();
+      data1.append("LoginID", this.retrievedLogin);
+
+      store1.RetrievedData_function(data1).then((res) => {
+        this.userinfo = store1.RetrievedData;
+
+        // Check if userinfo and the data array exist
+        if (
+          !this.userinfo ||
+          !this.userinfo.data ||
+          !this.userinfo.data.length
+        ) {
+          console.error("Invalid user info retrieved.");
+          return;
+        }
+
+        // Directly access the first element of the data array
+        this.userData = this.userinfo.data[0];
+        if (!this.userData) {
+          console.error("Invalid user info retrieved.");
+          return;
+        }
+
+        /*   console.log("Data Retrieved View ALl jobs:", this.userData); */
+
+        const store2 = useDashBoard();
+        let data2 = new FormData();
+        data2.append("CompanyID", this.userData.ID);
+        /*  console.log("CompanyID", this.userData.ID); */
+        data2.append("month", this.Server_monthNumber);
+        /*  console.log("month", this.Server_monthNumber); */
+        data2.append("year", this.Server_year);
+        this.events = [];
+        store2.GetPotentialApplicant(data2).then((res) => {
+          this.potentialApplicant_Selected =
+            store.PotentialApplicant.appointment;
+          console.log(
+            "Response from Get Appointment:",
+            this.potentialApplicant_Selected
+          );
+          // Create a map to track unique Job_IDs
+          const jobIdMap = new Map();
+
+          this.potentialApplicant_Selected.forEach((event) => {
+            if (!jobIdMap.has(event.Job_ID)) {
+              // Add the event to the map if the Job_ID is not yet encountered
+              jobIdMap.set(event.Job_ID, {
+                id: event.ID,
+                title: event.title,
+                start: event.Appointment_date,
+                end: event.Appointment_date,
+                details: event.Appointment_time,
+              });
+            }
+          });
+
+          // Convert the map values to an array and assign it to events
+          this.events = Array.from(jobIdMap.values());
+
+          console.log("new events=>", this.events);
+          /*
+            /*    console.log("Server_year", this.Server_year); */
+        });
+      });
+    });
+    setInterval(() => {
+      store.Set_Appointment_Store().then((res) => {
+        this.serverdatetime = store.Server_Date_TIme;
+
+        // Extracting the date from the response
+        const serverDate = store.Server_Date_TIme.date;
+
+        // Create a new Date object from the server date
+        const dateObj = new Date(serverDate);
+
+        // Format the date into month name, day, and year
+        const options = { year: "numeric", month: "long", day: "numeric" };
+        const formattedDate = dateObj.toLocaleDateString("en-US", options);
+
+        // Split the formatted date into components
+        const [monthName, day, year] = formattedDate.split(" ");
+
+        // Get the month number (0-11) and add 1 to convert to 1-12
+        const monthNumber = dateObj.getMonth() + 1;
+
+        // Assign the values to your component's data properties
+        this.Server_monthName = monthName;
+        this.Server_day = day.replace(",", ""); // Remove the comma from the day
+        this.Server_year = year;
+        this.Server_monthNumber = monthNumber;
+      });
+    }, 1000);
   },
   setup() {
     const tab = ref("receievedcvs");
+
     return {
       tab,
     };
