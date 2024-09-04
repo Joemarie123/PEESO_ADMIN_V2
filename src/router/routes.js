@@ -67,6 +67,7 @@ const routes = [
 
       {
         path: "/CreateJobPost",
+        name: "CreateJobPost",
         component: () => import("pages/CreateJobPost.vue"),
       },
 

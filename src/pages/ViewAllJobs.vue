@@ -103,6 +103,17 @@
                       @click="handleRowClick(jobPost)"
                     >
                       <div class="row">
+                        <div class="q-mx-lg col-12">
+                          <q-icon
+                            size="xs"
+                            @click.stop="clickto_Edit(jobPost)"
+                            style="color: green"
+                            name="edit"
+                            class="input-icon"
+                          />
+                        </div>
+                      </div>
+                      <div class="row">
                         <div class="col-7">
                           <q-card-section class="row items-center">
                             <img
@@ -784,6 +795,16 @@ export default {
   },
 
   methods: {
+    clickto_Edit(jobPost) {
+      console.log("CLICK ME", jobPost.ID);
+
+      this.$router.push({
+        name: "CreateJobPost",
+        params: { id: jobPost.ID },
+      });
+      
+    },
+
     Click_Submit_SetAppointment() {
       const store = useJobpost();
       if (this.applyToAll) {

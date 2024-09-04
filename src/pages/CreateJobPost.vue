@@ -892,6 +892,8 @@ export default defineComponent({
   },
 
   created() {
+    console.log("selected=>", this.$route.params.id);
+
     this.retrievedLogin = localStorage.getItem("Login");
     console.log("Retrieved Login Local Storage:", this.retrievedLogin);
 

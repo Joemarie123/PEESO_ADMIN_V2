@@ -9,7 +9,7 @@ export const useJobpost = defineStore("JobPostStore", {
     UpdateApplicant_Array: [],
     PotentialApplicant_Array: [],
     SetAppointment_Array: [],
-
+    selectedJobId: null,
     /*  selectedJobID: 0,  */
   }),
   getters: {
@@ -20,6 +20,12 @@ export const useJobpost = defineStore("JobPostStore", {
       this.selectedJobID = jobID;
       console.log("State JOB ID", this.selectedJobID);
     }, */
+    setSelectedJobId(id) {
+      this.selectedJobId = id;
+    },
+    clearSelectedJobId() {
+      this.selectedJobId = null;
+    },
 
     async Set_Appointment_Store(payload) {
       // `http://10.0.1.26:82/HRPORTAL/login.php`
