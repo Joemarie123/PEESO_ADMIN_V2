@@ -1,48 +1,5 @@
 <template>
   <q-page>
-    <div class="custom-mx-xxl q-my-md">
-      <div class="profile-container">
-        <div class="profile-avatar">
-          <q-avatar class="avatar">
-            <img :src="imgurl" />
-          </q-avatar>
-        </div>
-        <div class="profile-details" style="margin-top: -40px">
-          <h2 class="title" style="margin-bottom: -10px">
-            <b>
-              <span
-                v-if="userinfo.data && userinfo.data.length > 0"
-                style="font-size: 16px; font-weight: bold"
-              >
-                {{ userinfo.data[0].Company_name }}
-              </span></b
-            >
-          </h2>
-          <p
-            v-if="userinfo.data && userinfo.data.length > 0"
-            style="font-size: 12px; font-weight: inherit"
-            class="title"
-          >
-            {{ userinfo.data[0].Company_address }}
-          </p>
-          <br />
-          <br />
-          <p style="margin-bottom: -10px; margin-top: 20px; font-weight: 500">
-            <!--   SALARY -->
-          </p>
-          <p></p>
-          <p
-            style="margin-bottom: -10px; margin-top: -2px; font-weight: 500"
-          ></p>
-          <p></p>
-          <p
-            style="margin-bottom: -10px; margin-top: -2px; font-weight: 500"
-          ></p>
-          <p></p>
-        </div>
-      </div>
-    </div>
-
     <div class="row q-mx-lg q-my-lg">
       <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
         <q-card class="card_1" style="border-radius: 12px">
@@ -63,6 +20,7 @@
               style="margin-top: 11px"
             >
               <q-avatar
+                square=""
                 size="65px"
                 class="hoverimage"
                 @click="triggerFileUpload"
@@ -78,7 +36,7 @@
                   {{ errors.file }}
                 </div>
               </q-avatar>
-              <p style="margin-left: 10px">Upload Job Profile</p>
+              <p style="margin-left: 5px">Upload Campaign Add</p>
 
               <input
                 type="file"
@@ -456,7 +414,6 @@
               <div class="flex-container">
                 <div class="q-pa-xs" style="width: 940px">
                   <q-editor
-                    style="height: 370px"
                     v-model="txtdescription"
                     :dense="$q.screen.lt.md"
                     :toolbar="toolbarOptions"
@@ -470,6 +427,7 @@
                       times_new_roman: 'Times New Roman',
                       verdana: 'Verdana',
                     }"
+                    style="height: 370px; overflow: auto"
                   />
                 </div>
                 <div
@@ -927,6 +885,8 @@ export default defineComponent({
         this.items = "";
         this.txtaddtags = "";
         this.file = { imageUrl: "/upload.jpg" };
+
+        this.$router.push("/ViewAllJobs");
       });
     },
   },
@@ -985,12 +945,12 @@ export default defineComponent({
         console.error("Error retrieving data:", error);
       });
   },
+  /*  computed: {}, */
   computed: {
     companyName() {
       return this.userData ? this.userData.Company_name : "";
     },
-  },
-  computed: {
+
     toolbarOptions() {
       if (this.$q.screen.lt.sm) {
         // Toolbar options for small screens

@@ -105,6 +105,7 @@
                       class="glossy q-mx-md"
                       size="10px"
                       rounded
+                      outline
                       color="red"
                       label="Decline"
                     />
@@ -115,7 +116,7 @@
                       class="q-mx-lg"
                       size="10px"
                       rounded
-                      color="blue"
+                      color="green"
                       label="WAITING LIST"
                     />
                   </div>
@@ -517,7 +518,7 @@ export default {
 
 .textbox {
   padding: 10px;
-  border: 1px solid #0b66a3;
+  border: 1px solid #1cb109;
   border-radius: 13px;
 
   width: 180px;
@@ -567,13 +568,13 @@ export default {
 }
 
 .custom-card_jobpost {
-  border-top: 4px solid rgba(33, 82, 187, 0.799);
+  border-top: 4px solid rgba(33, 187, 56, 0.799);
   border-radius: 8px;
   overflow: hidden;
 }
 
 .custom-card_Shortlisted {
-  border-top: 4px solid rgba(245, 97, 17, 0.799);
+  border-top: 4px solid rgba(17, 152, 38, 0.799);
   border-radius: 8px;
   overflow: hidden;
   margin-inline-start: 30px;
@@ -597,7 +598,7 @@ export default {
 }
 
 .namecolor {
-  color: rgb(8, 131, 189);
+  color: rgb(10, 10, 10);
   font-size: 15px;
 }
 

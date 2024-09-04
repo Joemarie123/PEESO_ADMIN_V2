@@ -87,52 +87,53 @@
 
           <!-- </q-tabs> -->
 
-          <div class="q-gutter-y-sm">
-            <div style="margin-top: 38px">
-              <div class="scrollable-container">
-                <div class="q-gutter-md">
-                  <q-card
-                    v-for="jobPost in filteredJobPosts"
-                    :key="jobPost.ID"
-                    :class="[
-                      'q-mb-md',
-                      'custom-card_jobpost',
-                      { 'active-card': activeCard == jobPost.ID },
-                    ]"
-                    @click="handleRowClick(jobPost)"
-                  >
-                    <div class="row">
-                      <div class="col-7">
-                        <q-card-section class="row items-center">
-                          <img
-                            style="max-width: 35px"
-                            :src="getJobImage(jobPost.pic)"
-                            alt="Position Picture"
-                            :imgProps="{ width: '100px', height: '100px' }"
-                          />
-                          <div class="q-ml-sm">
-                            <div
-                              class="text-h6 namecolor"
-                              v-if="jobPost.Title.length > 28"
-                              v-tooltip.bottom="jobPost.Title"
-                            >
-                              {{ truncateTitle(jobPost.Title, 28) }}
-                              <q-tooltip>{{ jobPost.Title }}</q-tooltip>
+          <q-card shadow-5>
+            <div class="q-gutter-y-sm">
+              <div style="margin-top: 25px; padding: 10px">
+                <div class="scrollable-container">
+                  <div class="q-gutter-md">
+                    <q-card
+                      v-for="jobPost in filteredJobPosts"
+                      :key="jobPost.ID"
+                      :class="[
+                        'q-mb-md',
+                        'custom-card_jobpost',
+                        { 'active-card': activeCard == jobPost.ID },
+                      ]"
+                      @click="handleRowClick(jobPost)"
+                    >
+                      <div class="row">
+                        <div class="col-7">
+                          <q-card-section class="row items-center">
+                            <img
+                              style="max-width: 35px"
+                              :src="getJobImage(jobPost.pic)"
+                              alt="Position Picture"
+                              :imgProps="{ width: '100px', height: '100px' }"
+                            />
+                            <div class="q-ml-sm">
+                              <div
+                                class="text-h6 namecolor"
+                                v-if="jobPost.Title.length > 28"
+                                v-tooltip.bottom="jobPost.Title"
+                              >
+                                {{ truncateTitle(jobPost.Title, 28) }}
+                                <q-tooltip>{{ jobPost.Title }}</q-tooltip>
+                              </div>
+                              <div class="text-h6 namecolor" v-else>
+                                {{ truncateTitle(jobPost.Title, 28) }}
+                              </div>
+                              <div
+                                class="text-subtitle2"
+                                style="margin-top: -8px"
+                              >
+                                Salary: ₱ {{ jobPost.Salary }}
+                              </div>
                             </div>
-                            <div class="text-h6 namecolor" v-else>
-                              {{ truncateTitle(jobPost.Title, 28) }}
-                            </div>
-                            <div
-                              class="text-subtitle2"
-                              style="margin-top: -8px"
-                            >
-                              Salary: ₱ {{ jobPost.Salary }}
-                            </div>
-                          </div>
-                        </q-card-section>
+                          </q-card-section>
 
-                        <div class="row">
-                          <!--   <q-card-section class="row items-center">
+                          <div class="row">
+                            <!--   <q-card-section class="row items-center">
                             <div class="circle-icon-reject">
                               <q-icon
                                 name="close"
@@ -146,114 +147,115 @@
                             </div>
                           </q-card-section> -->
 
-                          <q-card-section
-                            class="row items-center"
-                            style="margin-top: -10px"
-                          >
-                            <div class="circle-icon">
-                              <q-icon
-                                name="check"
-                                class="q-ml-xs custom-icon-class-reject"
-                              />
-                            </div>
-                            <div>
-                              <div class="text-subtitle2">
-                                Total Accept / {{ jobPost.totalaccepted }}
+                            <q-card-section
+                              class="row items-center"
+                              style="margin-top: -10px"
+                            >
+                              <div class="circle-icon">
+                                <q-icon
+                                  name="check"
+                                  class="q-ml-xs custom-icon-class-reject"
+                                />
                               </div>
-                            </div>
-                          </q-card-section>
-                          <div
-                            class="row items-center"
-                            style="margin-top: -10px"
-                          >
-                            <!--     <div class="circle-icon">
+                              <div>
+                                <div class="text-subtitle2">
+                                  Total Accept / {{ jobPost.totalaccepted }}
+                                </div>
+                              </div>
+                            </q-card-section>
+                            <div
+                              class="row items-center"
+                              style="margin-top: -10px"
+                            >
+                              <!--     <div class="circle-icon">
                               <q-icon
                                 name="check"
                                 class="q-ml-xs custom-icon-class-reject"
                               />
                             </div> -->
-                            <div>
-                              <div
-                                class="text-subtitle2"
-                                style="margin-left: 18px; margin-bottom: 10px"
-                              >
-                                Date Posted: {{ formatDate(jobPost.DateFrom) }}
+                              <div>
+                                <div
+                                  class="text-subtitle2"
+                                  style="margin-left: 18px; margin-bottom: 10px"
+                                >
+                                  Date Posted:
+                                  {{ formatDate(jobPost.DateFrom) }}
+                                </div>
                               </div>
                             </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div class="col-5" style="margin-top: -8px">
-                        <q-card-section class="row items-center">
-                          <div>
-                            <div
-                              class="text-h6"
-                              style="font-size: 13px; font-weight: 400"
-                            >
-                              Total Vacant: {{ jobPost.VacantCount }}
+                        <div class="col-5" style="margin-top: -8px">
+                          <q-card-section class="row items-center">
+                            <div>
+                              <div
+                                class="text-h6"
+                                style="font-size: 13px; font-weight: 400"
+                              >
+                                Total Vacant: {{ jobPost.VacantCount }}
+                              </div>
                             </div>
-                          </div>
-                        </q-card-section>
-                        <q-card-section class="row items-center">
-                          <div>
-                            <div
-                              class="text-h6"
-                              style="
-                                font-size: 13px;
-                                font-weight: 400;
-                                margin-top: -40px;
-                              "
-                            >
-                              Total Applied: {{ jobPost.totalapplicant }}
-                            </div>
-                            <!--   <div
+                          </q-card-section>
+                          <q-card-section class="row items-center">
+                            <div>
+                              <div
+                                class="text-h6"
+                                style="
+                                  font-size: 13px;
+                                  font-weight: 400;
+                                  margin-top: -40px;
+                                "
+                              >
+                                Total Applied: {{ jobPost.totalapplicant }}
+                              </div>
+                              <!--   <div
                               class="text-subtitle2 yellowgold"
                               style="margin-top: -8px"
                             >
 
                             </div> -->
-                          </div>
-                        </q-card-section>
-
-                        <q-card-section class="row items-center">
-                          <div>
-                            <div
-                              class="text-h6"
-                              style="
-                                font-size: 13px;
-                                font-weight: 400;
-                                margin-top: -48px;
-                              "
-                            >
-                              Total Hired: {{ jobPost.totalhired }}
                             </div>
-                            <div
-                              class="text-h6"
-                              style="
-                                font-size: 13px;
-                                font-weight: 400;
-                                margin-top: -10px;
-                              "
-                            >
-                              Total Rejected:
-                              <span style="color: red">{{
-                                jobPost.totalrejected
-                              }}</span>
-                            </div>
+                          </q-card-section>
 
-                            <!--     <div
+                          <q-card-section class="row items-center">
+                            <div>
+                              <div
+                                class="text-h6"
+                                style="
+                                  font-size: 13px;
+                                  font-weight: 400;
+                                  margin-top: -48px;
+                                "
+                              >
+                                Total Hired: {{ jobPost.totalhired }}
+                              </div>
+                              <div
+                                class="text-h6"
+                                style="
+                                  font-size: 13px;
+                                  font-weight: 400;
+                                  margin-top: -10px;
+                                "
+                              >
+                                Total Rejected:
+                                <span style="color: red">{{
+                                  jobPost.totalrejected
+                                }}</span>
+                              </div>
+
+                              <!--     <div
                               class="text-subtitle2"
                               style="margin-top: -8px"
                             >
 
                             </div> -->
-                          </div>
-                        </q-card-section>
+                            </div>
+                          </q-card-section>
+                        </div>
                       </div>
-                    </div>
 
-                    <!--   <div class="row">
+                      <!--   <div class="row">
             <div class="col-7">
               <q-card-section class="row items-center">
                 <div class="circle-icon">
@@ -273,21 +275,22 @@
             </div>
           </div> -->
 
-                    <q-separator />
-                  </q-card>
-                  <!--     <q-infinite-scroll
+                      <q-separator />
+                    </q-card>
+                    <!--     <q-infinite-scroll
                     :offset="100"
                     @load="loadMoreJobPosts"
                     :disable="!hasMore"
                   >
                     <q-spinner color="primary" />
                   </q-infinite-scroll> -->
+                  </div>
                 </div>
               </div>
-            </div>
-            <!--     </q-tab-panel>
+              <!--     </q-tab-panel>
             </q-tab-panels> -->
-          </div>
+            </div>
+          </q-card>
         </div>
       </div>
 
@@ -336,7 +339,7 @@
           <q-tab name="history" label="HISTORY" />
         </q-chip> -->
           </q-tabs>
-
+          <!--  <q-card> -->
           <div class="q-gutter-y-sm" style="margin-top: -12px">
             <q-tab-panels v-model="tab" animated class="text-left">
               <q-tab-panel name="receievedcvs">
@@ -346,7 +349,7 @@
                       <q-card
                         v-for="user in filteredJobApplicant"
                         :key="user.id"
-                        class="q-mb-md custom-card"
+                        class="custom-card"
                       >
                         <div class="row">
                           <div class="col-4">
@@ -502,7 +505,7 @@
               </q-tab-panel>
             </q-tab-panels>
           </div>
-
+          <!--  </q-card> -->
           <div class="q-gutter-y-sm" style="margin-top: -8px">
             <q-tab-panels v-model="tab" animated class="text-left">
               <q-tab-panel name="shortlisted">
@@ -904,6 +907,15 @@ export default {
             "Filtered GetJobPosting (APPLIED only):",
             this.GetJobPosting
           );
+
+          /////////////////////////////////////////////////
+          const store1 = useJobpost();
+          let data1 = new FormData();
+          data1.append("CompanyID", this.userData.ID);
+          store1.Retrieve_Jobs(data1).then((res) => {
+            this.Data_Retrieved = store1.RetrieveJobs_Array;
+            console.log(" Database:", this.Data_Retrieved);
+          });
         });
         this.SuccessfullyDeclined();
       });
@@ -964,6 +976,15 @@ export default {
         });
 
         this.SuccessfullyAccepted();
+
+        /////////////////////////////////////////////////////////
+        const store1 = useJobpost();
+        let data1 = new FormData();
+        data1.append("CompanyID", this.userData.ID);
+        store1.Retrieve_Jobs(data1).then((res) => {
+          this.Data_Retrieved = store1.RetrieveJobs_Array;
+          console.log(" Database:", this.Data_Retrieved);
+        });
       });
     },
 
@@ -1252,12 +1273,12 @@ export default {
 
 .custom-card_jobpost.active-card {
   background-color: rgba(44, 50, 43, 0.425);
-  border-top: 4px solid rgba(44, 50, 43, 0);
+  border: 4px solid rgba(44, 50, 43, 0);
   color: white; /* Change text color if needed */
 }
 
 .custom-card_jobpost {
-  border-top: 4px solid rgba(90, 92, 91, 0.799);
+  border: 1px solid rgba(0, 0, 0, 0.192);
   border-radius: 8px;
   overflow: hidden;
   cursor: pointer;
@@ -1265,7 +1286,7 @@ export default {
 }
 
 .custom-card_Shortlisted {
-  border-top: 4px solid rgba(90, 92, 91, 0.799);
+  border: 1px solid rgba(0, 0, 0, 0.192);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -1275,7 +1296,7 @@ export default {
 }
 
 .custom-card {
-  border-top: 4px solid rgba(90, 92, 91, 0.799);
+  border: 1px solid rgba(0, 0, 0, 0.192);
   border-radius: 8px;
   overflow: hidden;
 }

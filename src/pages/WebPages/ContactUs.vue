@@ -95,7 +95,7 @@
               <div class="q-mb-md">
                 <q-icon name="location_on" /> <strong>Office Address:</strong>
                 <p>
-                  Public Employment Service Office (PESO)<br />
+                  Public Education and Employment Services Office (CPESCDO)<br />
                   Tagum City Hall, 2nd Floor<br />
                   Tagum City, Davao del Norte<br />
                   Philippines

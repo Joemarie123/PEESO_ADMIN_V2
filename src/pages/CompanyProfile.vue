@@ -58,6 +58,7 @@
       <q-card class="about-us-card custom-card">
         <div class="q-pa-xs">
           <q-editor
+            style="height: 370px; overflow: auto"
             v-model="txtdescription"
             :dense="$q.screen.lt.md"
             :toolbar="toolbarOptions"

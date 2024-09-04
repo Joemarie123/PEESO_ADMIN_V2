@@ -18,7 +18,7 @@
                 </div>
               </div>
               <div class="col" style="margin-left: 8px; margin-top: 20px">
-                <div style="font-size: 14px">Total Jobs</div>
+                <div style="font-size: 14px">Vacant Positions</div>
                 <div
                   data-aos="fade-in"
                   data-aos-duration="1500"
@@ -44,7 +44,7 @@
                       class="text-subtitle2 totalapplicant"
                       style="margin-top: -8px"
                     >
-                      Active Job Post
+                      Active Job Posts
                     </div>
                   </div>
                 </q-card-section>
@@ -58,7 +58,7 @@
                       class="text-subtitle2 totalapplicant"
                       style="margin-top: -8px"
                     >
-                      Vacant Position
+                      Total Job Posting
                     </div>
                   </div>
                 </q-card-section>
@@ -72,7 +72,7 @@
                       class="text-subtitle2 totalapplicant"
                       style="margin-top: -8px"
                     >
-                      Closed Jobs
+                      Closed Job
                     </div>
                   </div>
                 </q-card-section>
@@ -159,38 +159,10 @@
 
           <q-card-section>
             <div class="row" style="margin-top: -38px; margin-left: -10px">
-              <div class="col-3">
-                <q-card-section class="row items-center">
-                  <div>
-                    <div class="text-h6 numbersize">120</div>
-                    <div
-                      class="text-subtitle2 totalapplicant"
-                      style="margin-top: -8px"
-                    >
-                      Registered
-                    </div>
-                  </div>
-                </q-card-section>
-              </div>
-
-              <div class="col-3">
-                <q-card-section class="row items-center">
-                  <div>
-                    <div class="text-h6 numbersize">234</div>
-                    <div
-                      class="text-subtitle2 totalapplicant"
-                      style="margin-top: -8px"
-                    >
-                      Declined
-                    </div>
-                  </div>
-                </q-card-section>
-              </div>
-
               <div class="col-4">
                 <q-card-section class="row items-center">
                   <div>
-                    <div class="text-h6 numbersize">432</div>
+                    <div class="text-h6 numbersize">75</div>
                     <div
                       class="text-subtitle2 totalapplicant"
                       style="margin-top: -8px"
@@ -201,15 +173,43 @@
                 </q-card-section>
               </div>
 
-              <div class="col-2">
+              <div class="col-3">
                 <q-card-section class="row items-center">
                   <div>
-                    <div class="text-h6 numbersize">554</div>
+                    <div class="text-h6 numbersize">20</div>
                     <div
                       class="text-subtitle2 totalapplicant"
                       style="margin-top: -8px"
                     >
                       Hired
+                    </div>
+                  </div>
+                </q-card-section>
+              </div>
+
+              <div class="col-3">
+                <q-card-section class="row items-center">
+                  <div>
+                    <div class="text-h6 numbersize">30</div>
+                    <div
+                      class="text-subtitle2 totalapplicant"
+                      style="margin-top: -8px"
+                    >
+                      Pooling
+                    </div>
+                  </div>
+                </q-card-section>
+              </div>
+
+              <div class="col-2">
+                <q-card-section class="row items-center">
+                  <div>
+                    <div class="text-h6 numbersize">105</div>
+                    <div
+                      class="text-subtitle2 totalapplicant"
+                      style="margin-top: -8px"
+                    >
+                      Declined
                     </div>
                   </div>
                 </q-card-section>
@@ -240,7 +240,6 @@
 </template>
 
 <script>
-
 import Schedule_Calendar from "../components/Schedule_Calendar.vue";
 import Scheduled_List from "../components/Scheduled_List.vue";
 import AOS from "aos";
@@ -256,7 +255,7 @@ export default {
       displayNumber_TotalApplicant: 0,
       displayNumber_TotalJobs: 0,
       totalJobs: 453, // Replace with actual data
-      totalApplicants: 1500, // Replace with actual data
+      totalApplicants: 300, // Replace with actual data
 
       getAppointment_me: [],
       events: [],
@@ -277,8 +276,6 @@ export default {
     Schedule_Calendar,
     Scheduled_List,
   },
- 
-
 
   methods: {
     schedule_Dialog() {

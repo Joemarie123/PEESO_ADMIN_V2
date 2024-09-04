@@ -29,7 +29,7 @@
             </p>
           </div>
           <h3 data-aos="fade-up" data-aos-duration="1500" class="CPEESO">
-            <span style="">CPEESO</span> <br />
+            <span style="">CPESCDO</span> <br />
           </h3>
           <h4 data-aos="fade-up" data-aos-duration="1500" class="tagumcity">
             TAGUM CITY
@@ -43,8 +43,8 @@
                 style="justify-content: space-around"
                 class="publicEducation"
               >
-                Public Education and Employment Services Office (P.E.E.S.O.) is
-                a government agency tasked in providing education and employment
+                The Public Education and Employment Services Office (CPESCDO) is a
+                government agency tasked in providing education and employment
                 services under the Department of Labor and Employment (DOLE).
               </p>
             </div>
@@ -64,7 +64,7 @@
                 alt="Tagum City"
                 style="height: 14%; width: 14%"
               />
-              <p class="CPEESO_ni">CPEESO LOGIN</p>
+              <p class="CPEESO_ni">CPESCDO LOGIN</p>
             </div>
           </q-card-section>
 

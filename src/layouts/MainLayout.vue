@@ -100,13 +100,13 @@
           <div class="col-10">
             <q-item-label class="q-mt-sm" header>
               <span style="color: green; font-weight: bold; font-size: 20px"
-                >CPEESO TAGUM CITY</span
+                >CPESCDO TAGUM CITY</span
               >
             </q-item-label>
             <div style="margin-top: -27px">
               <q-item-label header>
                 <p style="font-size: 12px; font-weight: inherit">
-                  Welcome to Tagum City PEESO
+                  Welcome to Tagum City PESCDO
                 </p>
               </q-item-label>
             </div>
@@ -186,7 +186,7 @@
                 <q-icon name="chat" />
               </q-item-section>
 
-              <q-item-section> View All Jobs</q-item-section>
+              <q-item-section> Job Postings</q-item-section>
             </q-item>
 
             <q-item

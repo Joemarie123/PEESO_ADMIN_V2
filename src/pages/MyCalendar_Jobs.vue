@@ -5,14 +5,27 @@
     <div class="profile-container">
       <div class="profile-avatar">
         <q-avatar class="avatar">
-          <img src="/lyr.png" />
+          <img :src="imgurl" />
         </q-avatar>
       </div>
       <div class="profile-details" style="margin-top: -40px">
         <h2 class="title" style="margin-bottom: -10px">
-          <b>LYR LENDING CORPORATION </b>
+          <b>
+            <span
+              v-if="userinfo.data && userinfo.data.length > 0"
+              style="font-size: 16px; font-weight: bold"
+            >
+              {{ userinfo.data[0].Company_name }}
+            </span></b
+          >
         </h2>
-        <p class="title">CRX4+7W6, Tagum, Davao del Norte</p>
+        <p
+          v-if="userinfo.data && userinfo.data.length > 0"
+          style="font-size: 12px; font-weight: inherit"
+          class="title"
+        >
+          {{ userinfo.data[0].Company_address }}
+        </p>
         <br />
         <br />
         <p style="margin-bottom: -10px; margin-top: 20px; font-weight: 500">
@@ -24,7 +37,6 @@
         <p style="margin-bottom: -10px; margin-top: -2px; font-weight: 500"></p>
         <p></p>
       </div>
-   
     </div>
   </div>
   <div class="row">
@@ -48,6 +60,7 @@
 </template>
 
 <script>
+import { useLoginCheck } from "src/stores/SignUp_Store";
 import MyCalendar from "../components/MyCalendar.vue";
 import ShortListed_Scheduled from "../components/ShortListed_Scheduled.vue";
 import { defineComponent } from "vue";
@@ -55,11 +68,68 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "MonthSlotWeek",
   data() {
-    return {};
+    return {
+      userinfo: [],
+      imgurl: "",
+    };
   },
   components: {
     MyCalendar,
     ShortListed_Scheduled,
+  },
+  created() {
+    this.retrievedLogin = localStorage.getItem("Login");
+    console.log("Retrieved Login Local Storage:", this.retrievedLogin);
+
+    if (!this.retrievedLogin) {
+      console.error("No login found in localStorage.");
+      return;
+    }
+
+    const store = useLoginCheck();
+    let data = new FormData();
+    data.append("LoginID", this.retrievedLogin);
+
+    store
+      .RetrievedData_function(data)
+      .then((res) => {
+        this.userinfo = store.RetrievedData;
+
+        // Check if userinfo and the data array exist
+        if (
+          !this.userinfo ||
+          !this.userinfo.data ||
+          !this.userinfo.data.length
+        ) {
+          console.error("Invalid user info retrieved.");
+          return;
+        }
+
+        // Directly access the first element of the data array
+        this.userData = this.userinfo.data[0];
+        if (!this.userData) {
+          console.error("Invalid user info retrieved.");
+          return;
+        }
+
+        console.log("Data Retrieved:", this.userData);
+
+        const baseUrl =
+          "http://10.0.1.26:82/PEESOPORTAL/REGISTRATION/ADMIN/Logos/";
+        const companyName = encodeURIComponent(this.userData.Company_name);
+        const companyLogo = this.userData.Company_Logo
+          ? encodeURIComponent(this.userData.Company_Logo)
+          : "Company_Profile/e5d3982a1f7a511f789d.jpg";
+
+        this.imgurl =
+          companyLogo === "Company_Profile/e5d3982a1f7a511f789d.jpg"
+            ? `${baseUrl}${companyLogo}`
+            : `${baseUrl}${companyName}/${companyLogo}`;
+        console.log("Image URL:", this.imgurl);
+      })
+      .catch((error) => {
+        console.error("Error retrieving data:", error);
+      });
   },
 });
 </script>
@@ -104,7 +174,7 @@ export default defineComponent({
   border-radius: 12px;
   display: flex;
   align-items: center;
-  background: linear-gradient(to bottom, rgb(3, 69, 113) 50%, #f0ecec 50%);
+  background: linear-gradient(to bottom, rgb(0, 0, 0) 50%, #f0ecec 50%);
   padding: 20px;
 }
 

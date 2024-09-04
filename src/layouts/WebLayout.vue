@@ -37,7 +37,7 @@
             >Home</q-btn
           >
           <q-btn flat class="custom-hover" @click="scroll('WhatisPeeso')"
-            >What is Peeso</q-btn
+            >What is CPESCDO</q-btn
           >
           <q-btn flat class="custom-hover" @click="scroll('ContactUs')"
             >Contact Us</q-btn
