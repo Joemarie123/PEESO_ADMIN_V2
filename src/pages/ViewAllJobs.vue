@@ -796,13 +796,13 @@ export default {
 
   methods: {
     clickto_Edit(jobPost) {
-      console.log("CLICK ME", jobPost.ID);
+      console.log("CLICK ME", jobPost);
 
-      this.$router.push({
-        name: "CreateJobPost",
-        params: { id: jobPost.ID },
-      });
-      
+      // Convert the jobPost object to a string before saving
+      localStorage.setItem("jobPostID", JSON.stringify(jobPost));
+
+      // Redirect to the CreateJobPost route without params
+      this.$router.push({ name: "CreateJobPost" });
     },
 
     Click_Submit_SetAppointment() {
@@ -989,8 +989,13 @@ export default {
         }
 
         store3.Potential_Applicant_Store(data3).then((res) => {
-          this.Potential_Applicant = store3.PotentialApplicant_Array.filter(
-            (job) => job.status == "ACCEPTED"
+          // Ensure PotentialApplicant_Array is an array before filtering
+          const applicantsArray = Array.isArray(store3.PotentialApplicant_Array)
+            ? store3.PotentialApplicant_Array
+            : [];
+
+          this.Potential_Applicant = applicantsArray.filter(
+            (job) => job.status === "ACCEPTED"
           );
 
           console.log("Potential Applicant", this.Potential_Applicant);
@@ -1070,6 +1075,7 @@ export default {
     },
 
     goToPage(page) {
+      localStorage.removeItem("jobPostID");
       this.$router.push(page);
     },
 
@@ -1133,27 +1139,51 @@ export default {
           console.log(" Database:", this.Data_Retrieved);
         });
 
-        const store2 = useJobpost();
-        let data2 = new FormData();
-        data2.append("CompanyID", this.userData.ID);
-        store2.Get_Applicant(data2).then((res) => {
-          this.GetJobPosting = store2.GetJobs_Array.filter(
-            (job) => job.status == "APPLIED"
-          );
-
-          console.log("Get Applicant", this.GetJobPosting);
-        });
-
         const store3 = useJobpost();
+        const store2 = useJobpost(); // Ensure you are using the correct store
         let data3 = new FormData();
         data3.append("CompanyID", this.userData.ID);
-        store3.Potential_Applicant_Store(data3).then((res) => {
-          this.Potential_Applicant = store3.PotentialApplicant_Array.filter(
-            (job) => job.status == "ACCEPTED"
-          );
 
-          console.log("Potential Applicant", this.Potential_Applicant);
-        });
+        // Fetch potential applicants
+        store3
+          .Potential_Applicant_Store(data3)
+          .then((res) => {
+            const potentialApplicantsArray = Array.isArray(
+              store3.PotentialApplicant_Array
+            )
+              ? store3.PotentialApplicant_Array
+              : [];
+
+            this.Potential_Applicant = potentialApplicantsArray.filter(
+              (job) => job.status === "ACCEPTED"
+            );
+
+            console.log("Potential Applicant", this.Potential_Applicant);
+          })
+          .catch((error) => {
+            console.error("Error fetching potential applicants", error);
+          });
+
+        // Fetch job postings
+        let data2 = new FormData();
+        data2.append("CompanyID", this.userData.ID);
+
+        store2
+          .Get_Applicant(data2)
+          .then((res) => {
+            const getJobsArray = Array.isArray(store2.GetJobs_Array)
+              ? store2.GetJobs_Array
+              : [];
+
+            this.GetJobPosting = getJobsArray.filter(
+              (job) => job.status === "APPLIED"
+            );
+
+            console.log("Get Applicant", this.GetJobPosting);
+          })
+          .catch((error) => {
+            console.error("Error fetching job postings", error);
+          });
 
         const baseUrl =
           "http://10.0.1.26:82/PEESOPORTAL/REGISTRATION/ADMIN/Logos/";

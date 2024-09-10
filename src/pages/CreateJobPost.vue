@@ -14,7 +14,13 @@
                 </div>
               </div>
             </div>
-
+            <!--   <q-uploader
+              url="http://localhost:4444/upload"
+              color="teal"
+              flat
+              bordered
+              style="max-width: 300px"
+            /> -->
             <div
               class="uploadpic_margin col-12 col-sm-3 col-md-3 col-lg-3 col-xl-3 q-mt-md"
               style="margin-top: 11px"
@@ -470,6 +476,7 @@ export default defineComponent({
   name: "MonthSlotWeek",
   data() {
     return {
+      txtjobid: "",
       txtaddtags: "",
       items: [], // Array to store the entered items
       userinfo: [],
@@ -837,10 +844,6 @@ export default defineComponent({
     },
 
     async ClickMe_SavetoDatabase() {
-      /*  if (!this.userData) {
-        console.error("User data is not available.");
-        return;
-      } */
       console.log("before2 save");
       const store = useJobpost();
       let data = new FormData();
@@ -849,6 +852,9 @@ export default defineComponent({
         data.append("file", this.file);
       }
       console.log("before3 save");
+
+      data.append("Job_ID", this.txtjobid);
+
       data.append("Salary", this.txtsalary);
       data.append("DateFrom", this.txtdate_from);
       data.append("DateTo", this.txtdate_to);
@@ -864,6 +870,7 @@ export default defineComponent({
       data.append("Company_ID", this.userData.ID);
       data.append("tags", JSON.stringify(this.items));
       console.log("before save");
+
       store.SaveToDatabase_jobPost(data).then((res) => {
         console.log("Response from Save to Database:", res);
         this.showsuccessfulldialog();
@@ -892,7 +899,32 @@ export default defineComponent({
   },
 
   created() {
-    console.log("selected=>", this.$route.params.id);
+    const storedJobPost = localStorage.getItem("jobPostID");
+
+    if (storedJobPost) {
+      let jobPost = JSON.parse(storedJobPost);
+      console.log("Kini Daw", jobPost);
+
+      // Safely handle null or undefined tags
+      this.items = jobPost.tags ? jobPost.tags.map((tag) => tag.tags) : [];
+      this.imageUrl = jobPost.jobpic || "";
+      this.txtjobid = jobPost.ID || "";
+      this.txtjobtitle = jobPost.Title || "";
+      this.txtsalary = jobPost.Salary || "";
+      this.txtvacantcount = jobPost.VacantCount || "";
+      this.txtdate_from = jobPost.DateFrom || "";
+      this.txtdate_to = jobPost.DateTo || "";
+      this.txtnumber_hours = jobPost.NumHours || "";
+      this.txtnatureofWork = jobPost.Type || "";
+      this.txteducation_Level = jobPost.EducationLevel || "";
+      this.txtcourse = jobPost.Course || "";
+      this.txtworkexperience = jobPost.WorkExperience || "";
+      this.txtlicense = jobPost.License || "";
+      this.txtplaceofwork = jobPost.WorkPlace || "";
+      this.txtdescription = jobPost.Description || "";
+    } else {
+      /*  console.error("No jobPostID found in localStorage"); */
+    }
 
     this.retrievedLogin = localStorage.getItem("Login");
     console.log("Retrieved Login Local Storage:", this.retrievedLogin);
