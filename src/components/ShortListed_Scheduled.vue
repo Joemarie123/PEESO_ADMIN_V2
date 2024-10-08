@@ -4,35 +4,19 @@
       <!--  JOB ID: {{ jobID }} -->
       <p>
         Job Title:
-        <b>{{
-          filteredAppointments && filteredAppointments.length > 0
-            ? filteredAppointments[0].title
-            : "N/A"
-        }}</b>
+        <b>{{ events_ME.title }} </b>
       </p>
 
-      <p v-if="filteredAppointments" style="margin-top: -15px">
+      <p style="margin-top: -15px">
         Date Schedule:
         <b>
-          {{
-            filteredAppointments.length > 0
-              ? formatTime(filteredAppointments[0].Appointment_time)
-              : "N/A"
-          }}
+          {{ selctedDates.Appointment_date }}
         </b>
       </p>
-
-      <!--  <div v-for="appointment in filteredAppointments" :key="appointment.ID">
-        <h3>{{ appointment.title }}</h3>
-        <p>Salary: {{ appointment.salary }}</p>
-        <p>Applicant: {{ appointment.firstname }} {{ appointment.surname }}</p>
-        <img :src="appointment.pic" alt="Job Pic" />
-
-      </div> -->
     </q-card-section>
-    <q-card-section class="columns items-center">
+    <q-card-section class="columns items-center" style="margin-left: 35px">
       <p class="potentialapplicant">
-        Potential Applicant <b>{{ filteredAppointments.length }}</b>
+        Potential Applicant <b>{{ events_ME.totalAppointment }}</b>
       </p>
       <div style="margin-top: -13px">
         <input
@@ -45,148 +29,245 @@
   </div>
   <div class="scrollable-container custom_card_Shortlisted">
     <div class="q-gutter-md">
-      <q-card
-        v-for="user in filteredAppointments"
-        :key="user.id"
-        class="q-mb-md q-my-md custom-card_Shortlisted"
-      >
-        <div class="row">
-          <div class="col-xl-6 col-lg-5 col-md-7 col-sm-6 col-xs-12">
-            <q-card-section class="row items-center">
-              <q-avatar size="53px" class="q-mr-sm">
-                <img
-                  :src="user.pic ? user.pic : 'public/defaultpic.jpg'"
-                  alt="Profile Picture"
-                />
-              </q-avatar>
-              <div style="margin-top: -15px">
-                <div class="text-h6 namecolor">
-                  {{ user.firstname }}
-                </div>
-
-                <div class="text-subtitle2" style="margin-top: -8px">
-                  <div>
-                    <div class="text-subtitle2 namecolor">
-                      {{ user.surname }}
-                    </div>
-                  </div>
-                </div>
-                <div class="text-subtitle2" style="margin-top: -4px">
-                  <div>
-                    <div class="text-subtitle2">{{ user.contactno }}</div>
-                  </div>
-                </div>
-              </div>
-            </q-card-section>
-          </div>
-
-          <q-container>
-            <div
-              class="col-2 col-xl-3 col-lg-2 col-sm-12 col-md-8 responsive_1"
-            >
-              <!-- <q-card-section class="row items-center"> -->
-              <div style="margin-top: 10px">
-                <!--  <q-card-section
-                  class="row items-center"
-                  style="margin-top: -18px"
-                > -->
-                <div class="row">
-                  <div class="col-2">
-                    <q-btn
-                      class="glossy"
-                      size="10px"
-                      rounded
-                      color="green"
-                      label="Hire"
-                    />
-                  </div>
-                  <div class="col-3">
-                    <q-btn
-                      class="glossy q-mx-md"
-                      size="10px"
-                      rounded
-                      outline
-                      color="red"
-                      label="Decline"
-                    />
-                  </div>
-                  <div class="col-7">
-                    <q-btn
-                      outline
-                      class="q-mx-lg"
-                      size="10px"
-                      rounded
-                      color="green"
-                      label="WAITING LIST"
-                    />
-                  </div>
-                </div>
-                <!--   </q-card-section> -->
-              </div>
-              <!--  </q-card-section> -->
-            </div>
-          </q-container>
-          <!--    <div class="col-3 col-xl-3 col-lg-4 col-md-5 responsive_1">
-            <q-card-section class="row items-center" style="margin-top: -5px">
-              <div>
-                <div class="text-h6" style="font-size: 13px; font-weight: 400">
-                  Expected Salary
-                </div>
-                <div class="text-subtitle2 yellowgold" style="margin-top: -8px">
-                  ₱ {{ user.ExpectedSalary }}
-                </div>
-              </div>
-            </q-card-section>
-          </div> -->
+      <div class="row">
+        <div class="col-12 col-sm-8 col-md-4 col-lg-4 col-xl-4">
+          <q-card
+            class="q-mt-md custom_card_Scheduled_list"
+            style="margin-left: 14px"
+          >
+            <table class="q-table">
+              <thead>
+                <!--  <tr>
+                  <th>Title</th>
+                  <th>Total</th>
+                  <th>Confirmed</th>
+                </tr> -->
+              </thead>
+              <tbody>
+                <tr
+                  v-for="ebent in CalendarArray.data"
+                  :key="ebent.id"
+                  style="cursor: pointer"
+                  @click="handleClick(ebent)"
+                >
+                  <td v-tooltip.bottom="ebent.title">
+                    <span v-if="ebent.title.length > 22">
+                      {{ truncateTitle(ebent.title, 22) }}
+                      <q-tooltip>{{ ebent.title }}</q-tooltip>
+                    </span>
+                    <span v-else>
+                      {{ ebent.title }}
+                    </span>
+                  </td>
+                  <td>{{ ebent.totalAppointment }}</td>
+                  <td>{{ ebent.totalconfirm }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </q-card>
         </div>
 
-        <div class="row">
-          <div class="col-lg-7 col-xl-7">
-            <!--   <q-card-section
-                  class="row items-center"
-                  style="margin-top: -20px"
-                >
-                  <div class="circle-icon_phone">
-                    <q-icon name="call" class="q-ml-xs custom-icon-class" />
-                  </div>
+        <div class="col-8">
+          <q-card
+            v-for="user in Selected_Applicant"
+            :key="user.id"
+            class="q-mb-md q-my-md custom-card_Shortlisted q-mx-md"
+          >
+            <div class="row">
+              <div class="col-xl-8 col-lg-7 col-md-7 col-sm-11 col-xs-12">
+                <q-card-section class="row items-center">
+                  <q-avatar size="50px" class="q-mr-sm">
+                    <img
+                      style="margin-top: -12px"
+                      :src="user.pic ? user.pic : 'public/defaultpic.jpg'"
+                      alt="Profile Picture"
+                    />
+                  </q-avatar>
+                  <div style="margin-top: -15px">
+                    <div class="text-h6 namecolor">
+                      {{ user.firstname }}
+                    </div>
 
-                  <div>
-                    <div class="text-subtitle2">Contact Number: 0915487625</div>
+                    <div class="text-subtitle2" style="margin-top: -8px">
+                      <div>
+                        <div class="text-subtitle2 namecolor">
+                          {{ user.surname }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="text-subtitle2" style="margin-top: -3px">
+                      <div>
+                        <div class="text-subtitle2">{{ user.Contactno }}</div>
+                      </div>
+                    </div>
                   </div>
                 </q-card-section>
- -->
-            <!--       <q-card-section
-                  class="row items-center"
-                  style="margin-top: -30px"
-                >
-                  <div class="circle-icon">
-                    <q-icon name="check" class="q-ml-xs custom-icon-class" />
-                  </div>
+              </div>
 
-                  <div>
-                    <div class="text-subtitle2">
-                      Potentiala Applicant / {{ user.AppliedPosition }}
+              <q-container>
+                <div
+                  class="col-2 col-xl-4 col-lg-2 col-sm-12 col-md-8 responsive_1"
+                >
+                  <div class="row" style="margin-top: 12px">
+                    <div class="col-5" style="margin-left: 10px">
+                      <p v-if="user.Status !== 'RESCHEDULE'">
+                        STATUS:
+                        <span
+                          :style="{
+                            color:
+                              user.Status == 'CONFIRM'
+                                ? 'darkgoldenrod'
+                                : user.Status == 'DECLINE'
+                                ? 'red'
+                                : '',
+                          }"
+                        >
+                          {{ user.Status }}
+                        </span>
+                      </p>
+                      <!-- Render a button if the status is 'RESCHEDULE' -->
+                      <q-btn
+                        v-else
+                        outline
+                        size="11px"
+                        rounded
+                        label="RESCHEDULE"
+                        color="red"
+                        @click="handleReschedule(user)"
+                      />
                     </div>
                   </div>
-                </q-card-section> -->
-          </div>
-          <div class="col-lg-4 col-xl-4" style="margin-top: 8px">
-            <div class="q-gutter-sm">
-              <!--    <div>SCHEDULE INTERVIEW: <b> July 27,2024 10:</b></div>
- -->
-              <!--   <q-btn
-                    class="glossy"
-                    size="12px"
-                    rounded
-                    color="green"
-                    label="Schedule Interview"
-                  /> -->
+                </div>
+              </q-container>
             </div>
-          </div>
-        </div>
 
-        <q-separator />
-      </q-card>
+            <q-dialog v-model="dialogConfirm" persistent>
+              <q-card style="width: 400px">
+                <div style="margin: 10px">
+                  <!--  <p class="text-h6">Reason to Re-Schedule</p> -->
+                  <p>
+                    Prefered Date:
+                    <span style="font-weight: 900">{{
+                      formatDate(txttransferDate)
+                    }}</span>
+                  </p>
+                  <p style="margin-top: -15px">
+                    Prefered Time:
+                    <span style="font-weight: 900">{{
+                      formatTime(txttransferTime)
+                    }}</span>
+                  </p>
+
+                  <p style="font-weight: 900">REASON TO RE-SCHEDULE</p>
+                  <q-card
+                    style="height: 200px; overflow: auto; margin-top: -10px"
+                  >
+                    <p style="margin: 10px">
+                      {{ txtreasontransfer }}
+                    </p>
+                  </q-card>
+                  <!--  <q-input
+                    v-model="txtreasontransfer"
+                    readonly
+                    illed
+                    type="textarea"
+                  /> -->
+                  <!--    <q-card-section class="q-pt-none"> -->
+                  <!--   <p>{{ txtreasontransfer }}</p> -->
+                  <!--    </q-card-section> -->
+                </div>
+
+                <q-card-actions align="right">
+                  <!-- Confirm Button -->
+                  <q-btn
+                    flat
+                    label="Confirm"
+                    color="green"
+                    @click="handleConfirm()"
+                  />
+
+                  <!-- Decline Button -->
+                  <q-btn
+                    flat
+                    label="Decline"
+                    color="red"
+                    @click="Click_Decline()"
+                  />
+
+                  <!-- Reschedule Button -->
+                  <q-btn
+                    flat
+                    label="Reschedule"
+                    color="darkgoldenrod"
+                    @click="Click_handleReschedule()"
+                  />
+                </q-card-actions>
+              </q-card>
+
+              <q-dialog v-model="dialog_sched" persistent>
+                <q-card>
+                  <q-card-section>
+                    <div class="row items-center justify-start">
+                      <p style="font-size: 12px; margin-left: 5px">
+                        <span style="font-weight: bold"
+                          >Select Prefered Date</span
+                        >
+                      </p>
+                    </div>
+                    <q-date dense v-model="date" mask="YYYY-MM-DD" />
+                  </q-card-section>
+                </q-card>
+
+                <q-card>
+                  <q-card-section>
+                    <div class="row">
+                      <div class="col-10" style="margin-top: -5px">
+                        <q-btn
+                          class="glossy"
+                          size="11px"
+                          rounded
+                          color="blue"
+                          label="SUBMIT"
+                          @click="Click_Submit_SetAppointment"
+                        />
+                      </div>
+
+                      <div class="col-2">
+                        <div style="margin-top: -10px; margin-left: 6px">
+                          <q-btn
+                            flat
+                            round
+                            icon="close"
+                            @click="dialog_sched = false"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <q-time dense v-model="time1" mask="HH:mm" />
+                  </q-card-section>
+                </q-card>
+              </q-dialog>
+
+              <q-card-section style="margin-top: -390px; margin-left: -10px"
+                ><button class="button_close" @click="dialogConfirm = false">
+                  <b>X</b>
+                </button></q-card-section
+              >
+            </q-dialog>
+
+            <div class="row">
+              <div class="col-lg-7 col-xl-7"></div>
+              <div class="col-lg-4 col-xl-4" style="margin-top: 8px">
+                <div class="q-gutter-sm"></div>
+              </div>
+            </div>
+
+            <q-separator />
+          </q-card>
+        </div>
+      </div>
+
       <!--   <q-infinite-scroll
         :offset="100"
         @load="loadMoreUsers"
@@ -200,9 +281,12 @@
 
 <script>
 import { ref, onMounted } from "vue";
+
 import { useJobpost } from "src/stores/JobPost_Store";
 import { useDashBoard } from "src/stores/DashBoard_Store";
+import { useMycalendar } from "src/stores/MyCalendar_Store";
 import { useLoginCheck } from "src/stores/SignUp_Store";
+import { useQuasar } from "quasar";
 import axios from "axios";
 
 export default {
@@ -210,6 +294,16 @@ export default {
 
   data() {
     return {
+      dialog_sched: false,
+      dialogConfirm: false,
+      txtreasontransfer: "",
+      txtappintmentIDtransfere: "",
+      txttransferDate: "",
+      txttransferTime: "",
+
+      CalendarArrayBai: [],
+
+      CalendarArray: [],
       potentialApplicant_Selected: [],
       jobID: "", // Initialize jobID
       search_jobpost: "",
@@ -237,8 +331,20 @@ export default {
       time: "",
       getAppointment_me: [],
       events: [],
+      txtAppointmentDateTransfer: "",
+      selectedID: "",
 
       serverdatetime: [],
+
+      ebents: [
+        { eventsname: "Back End Devddddddf" },
+        { eventsname: "Truck Driver" },
+        { eventsname: "Sales Manager" },
+      ],
+
+      Selected_Applicant: [],
+      events_ME: [],
+      selctedDates: [],
     };
   },
 
@@ -285,6 +391,18 @@ export default {
   mounted() {
     this.retrieveJobID();
     this.startPolling();
+
+    setInterval(() => {
+      this.fetchCalendarData();
+    }, 500); // Call fetchCalendarData every 60 seconds (60000 milliseconds)
+
+    // Listen to the storage event for changes in localStorage across tabs/windows
+    window.addEventListener("storage", this.fetchCalendarData);
+  },
+
+  beforeUnmount() {
+    // Clean up the event listener when the component is destroyed
+    window.removeEventListener("storage", this.fetchCalendarData);
   },
 
   beforeUnmount() {
@@ -292,6 +410,157 @@ export default {
   },
 
   methods: {
+    Click_Submit_SetAppointment() {
+      const store = useMycalendar();
+      let data = new FormData();
+      data.append("AppointmentID", this.txtappintmentIDtransfere);
+      data.append("Action", "NEW SCHEDULE");
+      data.append("status", "NEW SCHEDULE");
+      data.append("Appointment_date", this.date);
+      data.append("Appointment_time", this.time);
+      /*  console.log("DATAA", data); */
+      store.Set_UpdateReschedule(data).then((res) => {
+        this.showsuccessfullsubmited();
+
+        this.dialogConfirm = false;
+        this.dialog_sched = false;
+      });
+    },
+
+    Click_handleReschedule() {
+      this.dialog_sched = true;
+    },
+    /*   formatTime(time) {
+      const [hours, minutes] = time.split(":");
+      let hour = parseInt(hours, 10);
+      const ampm = hour >= 12 ? "PM" : "AM";
+      hour = hour % 12 || 12; // Convert to 12-hour format and handle midnight (0) case
+      return `${hour}:${minutes} ${ampm}`;
+    }, */
+
+    formatDate(dateStr) {
+      const options = { year: "numeric", month: "long", day: "numeric" };
+      const date = new Date(dateStr);
+      return date.toLocaleDateString("en-US", options);
+    },
+
+    handleConfirm() {
+      const store = useMycalendar();
+      let data = new FormData();
+      data.append("AppointmentID", this.txtappintmentIDtransfere);
+      data.append("Action", "ACCEPT");
+      data.append("status", "CONFIRM");
+      data.append("Appointment_date", this.txttransferDate);
+      data.append("Appointment_time", this.txttransferTime);
+      console.log("DATAA", data);
+      store.Set_UpdateReschedule(data).then((res) => {
+        ////////// CODE TO REFRESH LOCSL STORAGE
+
+        const store = useMycalendar();
+        let data = new FormData();
+
+        data.append("CompanyID", this.userData.ID);
+        data.append("Date", this.txtAppointmentDateTransfer);
+        store.SetCalendar_Events(data).then((res) => {
+          this.CalendarArrayBai = store.Events_Calendar;
+          console.log("Calendar Events", this.CalendarArrayBai);
+          localStorage.setItem(
+            "Calendar",
+            JSON.stringify(this.CalendarArrayBai)
+          );
+          console.log("Object", Object.values(this.CalendarArrayBai.data));
+          const event = Object.values(this.CalendarArrayBai.data).find(
+            (event) => event.appointmentID == this.selectedID
+          );
+
+          if (event) {
+            this.handleClick(event);
+            console.log("Event found:", event);
+          } else {
+            console.log("Event not found with ID:", this.selectedID);
+          }
+
+          /* window.location.reload(); */
+          /*   eventBus.value?.emit("reload-calendar"); */
+
+          /*  this.$router.push({ name: "MyCalendar" }).then(() => {
+            window.location.reload();
+          }); */
+
+    
+        });
+
+        ////////// CODE TO REFRESH LOCSL STORAGE
+
+        this.showsuccessfulldialog();
+        this.dialogConfirm = false;
+      });
+    },
+
+    Click_Decline() {
+      const store = useMycalendar();
+      let data = new FormData();
+      data.append("AppointmentID", this.txtappintmentIDtransfere);
+      data.append("Action", "Decline");
+
+      store.Set_UpdateReschedule(data).then((res) => {
+        this.showDecline();
+        this.dialogConfirm = false;
+      });
+    },
+
+    handleReschedule(user) {
+      console.log("User bai bai ", user);
+      this.dialogConfirm = true;
+      this.txtreasontransfer = user.Remarks;
+      this.txtappintmentIDtransfere = user.ID;
+      this.txttransferDate = user.RescheduleDate;
+      this.txttransferTime = user.rescheduleTime;
+      this.txtAppointmentDateTransfer = user.Appointment_date;
+    },
+
+    handleClick(ebent) {
+      this.Selected_Applicant = ebent.applicants;
+      this.selectedID = ebent.appointmentID;
+      this.events_ME = ebent;
+      this.selctedDates = ebent.applicants[0];
+
+      console.log("Item clicked:", this.Selected_Applicant);
+
+      console.log("ITEMBAI ", this.events_ME);
+    },
+
+    fetchCalendarData() {
+      const storedCalendar = localStorage.getItem("Calendar");
+
+      if (storedCalendar) {
+        try {
+          this.CalendarArray = JSON.parse(storedCalendar);
+          /*    console.log("Fetched Calendar Events:", this.CalendarArray); */
+        } catch (error) {
+          /*          console.error("Error parsing stored calendar data:", error); */
+        }
+      } else {
+        /*         console.log("No calendar data found in localStorage."); */
+      }
+    },
+
+    updateCalendarData(newData) {
+      // This function is triggered whenever new data is added to localStorage
+      localStorage.setItem("Calendar", JSON.stringify(newData));
+
+      // Re-fetch the calendar data to update the component
+      this.fetchCalendarData();
+    },
+
+    truncateTitle(title, maxLength) {
+      if (title.length > maxLength) {
+        return title.substring(0, maxLength - 3) + "... ";
+      } else {
+        return title;
+      }
+    },
+
     formatTime(timeString) {
       const [hours, minutes] = timeString.split(":").map(Number);
       const period = hours >= 12 ? "PM" : "AM";
@@ -434,10 +703,7 @@ export default {
 
           // Convert the map values to an array and assign it to events
           this.events = Array.from(jobIdMap.values());
-
           console.log("new events=>", this.events);
-          /*
-            /*    console.log("Server_year", this.Server_year); */
         });
       });
     });
@@ -471,15 +737,107 @@ export default {
   },
   setup() {
     const tab = ref("receievedcvs");
+    const $q = useQuasar();
+    const now = new Date();
+
+    const formatDate = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
+
+    const formatTime = (date) => {
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+      return `${hours}:${minutes}`;
+    };
+
+    const date = ref(formatDate(now));
+    const time1 = ref(formatTime(now));
 
     return {
       tab,
+      date,
+      time1,
+
+      showsuccessfullsubmited() {
+        $q.notify({
+          icon: "star",
+          color: "green",
+          message: "Successfully Submited",
+          position: "center",
+          timeout: "1500",
+        });
+      },
+
+      showsuccessfulldialog() {
+        $q.notify({
+          icon: "star",
+          color: "green",
+          message: "Successfully Accepted",
+          position: "center",
+          timeout: "1500",
+        });
+      },
+
+      showDecline() {
+        $q.notify({
+          icon: "star",
+          color: "red",
+          message: "Successfully Declined",
+          position: "center",
+          timeout: "1500",
+        });
+      },
     };
   },
 };
 </script>
 
 <style scoped>
+.button_close {
+  width: 40px; /* Adjust the size as needed */
+  height: 40px; /* Ensure height matches width for a perfect circle */
+  border-radius: 50%; /* This makes the button circular */
+  background-color: #e7111fcb; /* Background color of the button */
+  color: white; /* Text color */
+  border: none; /* Remove default border */
+  display: flex; /* Center text horizontally and vertically */
+  align-items: center; /* Center text vertically */
+  justify-content: center; /* Center text horizontally */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-size: 16px; /* Adjust font size as needed */
+}
+
+.q-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.q-table th,
+.q-table td {
+  padding: 5px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.q-table th {
+  background-color: #f4f4f4;
+}
+
+.q-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.no-margin {
+  margin: 20px;
+}
+
+.no-padding {
+  padding: 20;
+}
+
 .potentialapplicant {
   margin-top: -5px;
 }
@@ -578,7 +936,17 @@ export default {
   border-radius: 8px;
   overflow: hidden;
   margin-inline-start: 30px;
-  height: 95px;
+  height: 82px;
+}
+
+.custom_card_Scheduled_list {
+  margin-left: 15px;
+  border-top: 4px solid rgba(17, 152, 38, 0.799);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-inline-start: 30px;
+  height: 310px;
+  margin-bottom: 15px;
 }
 
 @media only screen and (max-width: 599px) {

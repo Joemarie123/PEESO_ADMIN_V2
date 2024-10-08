@@ -1,44 +1,18 @@
 <template>
   <!--   <q-page> -->
+  <div class="row q-my-lg q-mx-xl" style="margin-top: 50px">
+  
+    <!-- <div class="col-12">
+      <q-card style="height: 50px; border-radius: 8px">
+        <p class="q-mt-md q-ml-sm"><b>MY CALENDAR OF SCHEDULE</b></p>
+      </q-card>
+    </div> -->
 
-  <div class="custom-mx-xxl q-my-md">
-    <div class="profile-container">
-      <div class="profile-avatar">
-        <q-avatar class="avatar">
-          <img :src="imgurl" />
-        </q-avatar>
-      </div>
-      <div class="profile-details" style="margin-top: -40px">
-        <h2 class="title" style="margin-bottom: -10px">
-          <b>
-            <span
-              v-if="userinfo.data && userinfo.data.length > 0"
-              style="font-size: 16px; font-weight: bold"
-            >
-              {{ userinfo.data[0].Company_name }}
-            </span></b
-          >
-        </h2>
-        <p
-          v-if="userinfo.data && userinfo.data.length > 0"
-          style="font-size: 12px; font-weight: inherit"
-          class="title"
-        >
-          {{ userinfo.data[0].Company_address }}
-        </p>
-        <br />
-        <br />
-        <p style="margin-bottom: -10px; margin-top: 20px; font-weight: 500">
-          <!--   SALARY -->
-        </p>
-        <p></p>
-        <p style="margin-bottom: -10px; margin-top: -2px; font-weight: 500"></p>
-        <p></p>
-        <p style="margin-bottom: -10px; margin-top: -2px; font-weight: 500"></p>
-        <p></p>
-      </div>
-    </div>
+    <q-card style="height: 50px; width: 1520px; border-radius: 8px">
+      <p class="q-mt-md q-ml-sm"><b>MY CALENDAR OF SCHEDULE</b></p>
+    </q-card>
   </div>
+
   <div class="row">
     <div
       class="q-my-sm q-mx-lg q-ml-xl col-xl-6 col-lg-6 col-md-11 col-sm-11 col-xs"
@@ -135,6 +109,12 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.custom_card_TotalJobs {
+  border-top: 4px solid rgba(46, 173, 8, 0.799);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
 @media only screen and (max-width: 1439px) {
   .responsive {
     margin-left: 45px; /* or any desired value */

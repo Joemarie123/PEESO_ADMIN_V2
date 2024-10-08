@@ -854,7 +854,6 @@ export default defineComponent({
       console.log("before3 save");
 
       data.append("Job_ID", this.txtjobid);
-
       data.append("Salary", this.txtsalary);
       data.append("DateFrom", this.txtdate_from);
       data.append("DateTo", this.txtdate_to);

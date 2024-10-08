@@ -487,6 +487,7 @@
                                 rounded
                                 size="14px"
                                 label="View Details"
+                                @click="Click_ViewDetails(user)"
                               />
                               <q-btn
                                 class="glossy"
@@ -661,6 +662,7 @@
                                 color="blue"
                                 flat
                                 rounded
+                                @click="Click_ViewDetails_potentian(potential)"
                                 size="14px"
                                 label="View Details"
                               />
@@ -671,13 +673,54 @@
                                 size="12px"
                                 label="Reject"
                               /> -->
+
+                              <!--   {{ potential.appointmentstatus }} -->
+
+                              <!--   v-if="
+                                  potential.appointmentstatus !== 'SCHEDULED'
+                                "
+                                 -->
                               <q-btn
+                                v-if="potential.appointmentstatus == null"
                                 @click="schedule_Dialog(potential)"
                                 class="glossy"
                                 size="12px"
                                 rounded
                                 color="green"
                                 label="Schedule Interview"
+                              />
+                              <q-chip
+                                v-else-if="
+                                  potential.appointmentstatus == 'SCHEDULED'
+                                "
+                                class="glossy"
+                                size="12px"
+                                outline
+                                color="teal"
+                                text-color="white"
+                                label="SCHEDULED"
+                              />
+                              <q-chip
+                                v-else-if="
+                                  potential.appointmentstatus == 'NEW SCHEDULE'
+                                "
+                                class="glossy"
+                                size="12px"
+                                outline
+                                color="teal"
+                                text-color="white"
+                                label="NEW SCHEDULE"
+                              />
+                              <q-chip
+                                v-else-if="
+                                  potential.appointmentstatus == 'CONFIRM'
+                                "
+                                class="glossy"
+                                size="12px"
+                                outline
+                                color="teal"
+                                text-color="white"
+                                label="CONFIRM SCHEDULE"
                               />
                             </div>
                           </div>
@@ -795,6 +838,38 @@ export default {
   },
 
   methods: {
+    Click_ViewDetails_potentian(potential) {
+      console.log("Click Potential", potential);
+
+      // Wrap the localStorage.setItem in a Promise to use .then()
+      new Promise((resolve) => {
+        localStorage.setItem(
+          "ControlNo_ViewDetails",
+          JSON.stringify(potential.ControlNo)
+        );
+        resolve(); // Resolve the promise immediately after setting the item
+      }).then(() => {
+        // This will execute after the localStorage item is set
+        this.$router.push({ name: "ViewDetails" });
+      });
+    },
+
+    Click_ViewDetails(user) {
+      console.log("Click User", user);
+
+      // Wrap the localStorage.setItem in a Promise to use .then()
+      new Promise((resolve) => {
+        localStorage.setItem(
+          "ControlNo_ViewDetails",
+          JSON.stringify(user.ControlNo)
+        );
+        resolve(); // Resolve the promise immediately after setting the item
+      }).then(() => {
+        // This will execute after the localStorage item is set
+        this.$router.push({ name: "ViewDetails" });
+      });
+    },
+
     clickto_Edit(jobPost) {
       console.log("CLICK ME", jobPost);
 
@@ -814,10 +889,45 @@ export default {
           data.append("ApplicantID", item.PMID);
           data.append("Appointment_date", this.date);
           data.append("Appointment_time", this.time);
-          store.Set_Appointment_Store(data);
+          store.Set_Appointment_Store(data).then((res) => {
+            this.SetAppointment_ME = store.SetAppointment_Array;
+            /*  this.filteredJob_Potential_Applicant(); */
+            const store3 = useJobpost();
+            let data3 = new FormData();
+            data3.append("JobID", this.Pass_JOBID);
+
+            store3
+              .Potential_Applicant_Store(data3)
+              .then((res) => {
+                // Ensure PotentialApplicant_Array is a valid array
+                if (!Array.isArray(store3.PotentialApplicant_Array)) {
+                  console.warn(
+                    "PotentialApplicant_Array is not a valid array. Resetting to empty array."
+                  );
+                  store3.PotentialApplicant_Array = []; // Reset to an empty array if the data is not valid
+                }
+
+                this.Potential_Applicant =
+                  store3.PotentialApplicant_Array.filter(
+                    (job) => job.status == "ACCEPTED"
+                  );
+
+                console.log(
+                  "Filtered Potential Applicant (ACCEPTED only):",
+                  this.Potential_Applicant
+                );
+              })
+              .catch((error) => {
+                console.error("Error fetching potential applicants:", error);
+                this.Potential_Applicant = []; // Optional: Reset to empty array on error
+              });
+
+            this.SuccessfullyAppoint();
+            this.dialog_sched = false;
+          });
         }
-        this.SuccessfullyAppoint();
-        this.dialog_sched = false;
+        /*    this.SuccessfullyAppoint();
+        this.dialog_sched = false; */
       } else {
         let data = new FormData();
         data.append("JobID", this.Pass_JOBID);
@@ -827,6 +937,36 @@ export default {
 
         store.Set_Appointment_Store(data).then((res) => {
           this.SetAppointment_ME = store.SetAppointment_Array;
+          /*  this.filteredJob_Potential_Applicant(); */
+          const store3 = useJobpost();
+          let data3 = new FormData();
+          data3.append("JobID", this.Pass_JOBID);
+
+          store3
+            .Potential_Applicant_Store(data3)
+            .then((res) => {
+              // Ensure PotentialApplicant_Array is a valid array
+              if (!Array.isArray(store3.PotentialApplicant_Array)) {
+                console.warn(
+                  "PotentialApplicant_Array is not a valid array. Resetting to empty array."
+                );
+                store3.PotentialApplicant_Array = []; // Reset to an empty array if the data is not valid
+              }
+
+              this.Potential_Applicant = store3.PotentialApplicant_Array.filter(
+                (job) => job.status == "ACCEPTED"
+              );
+
+              console.log(
+                "Filtered Potential Applicant (ACCEPTED only):",
+                this.Potential_Applicant
+              );
+            })
+            .catch((error) => {
+              console.error("Error fetching potential applicants:", error);
+              this.Potential_Applicant = []; // Optional: Reset to empty array on error
+            });
+
           this.SuccessfullyAppoint();
           this.dialog_sched = false;
         });
@@ -1231,7 +1371,6 @@ export default {
     });
 
     const formattedTime = computed(() => {
-      // Ensures the time is always displayed in 24-hour format
       const [hours, minutes] = time.value.split(":");
       const hours24 = String(parseInt(hours, 10)).padStart(2, "0");
       return `${hours24}:${minutes}`;

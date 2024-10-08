@@ -72,6 +72,19 @@ const routes = [
       },
 
       {
+        path: "/ViewDetails",
+        name: "ViewDetails",
+        component: () => import("components/ViewDetails.vue"),
+      },
+
+      {
+        path: "/MyCalendar",
+        name: "MyCalendar",
+        component: () => import("components/MyCalendar.vue"),
+        props: true, // Enable props for this route
+      },
+
+      {
         path: "/ShortListed_Scheduled",
         name: "ShortListed_Scheduled",
         component: () => import("pages/ShortListed_Scheduled.vue"),

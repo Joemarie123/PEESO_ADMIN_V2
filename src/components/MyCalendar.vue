@@ -4,6 +4,8 @@
 
     <div class="row justify-center">
       <div style="display: flex; max-width: 800px; width: 100%">
+
+        <!-- Display the passed data -->
         <q-calendar-month
           ref="calendar"
           v-model="selectedDate"
@@ -12,7 +14,7 @@
           focusable
           hoverable
           no-active-date
-          :day-min-height="60"
+          :day-min-height="64"
           :day-height="0"
           @change="onChange"
           @moved="onMoved"
@@ -36,12 +38,16 @@
                   class="title q-calendar__ellipsis"
                   @click="handDataclick(computedEvent)"
                 >
-                  {{
-                    computedEvent.event.title +
-                    (computedEvent.event.time
-                      ? " - " + computedEvent.event.time
-                      : "")
-                  }}
+                  <q-badge style="background-color: green">
+                    {{
+                      "Scheduled Interview" +
+                      (computedEvent.event.time
+                        ? " - " + computedEvent.event.time
+                        : "")
+                    }}
+                    
+                  </q-badge>
+
                   <q-tooltip>{{ computedEvent.event.details }}</q-tooltip>
                 </div>
               </div>
@@ -70,6 +76,7 @@ import NavigationBar from "../components/NavigationBar.vue";
 import { useDashBoard } from "src/stores/DashBoard_Store";
 import { useLoginCheck } from "src/stores/SignUp_Store";
 import { useJobpost } from "src/stores/JobPost_Store";
+import { useMycalendar } from "src/stores/MyCalendar_Store";
 
 import { defineComponent } from "vue";
 
@@ -84,10 +91,12 @@ function getCurrentDay(day) {
 
 export default defineComponent({
   name: "MonthSlotWeek",
+
   components: {
     NavigationBar,
     QCalendarMonth,
   },
+
   data() {
     return {
       selectedDate: today(),
@@ -107,7 +116,7 @@ export default defineComponent({
       Server_year: "",
       Server_monthNumber: "",
       time: "",
-
+      CalendarArray: [],
       getAppointment_me: [],
       GetDate_me: [],
 
@@ -213,12 +222,14 @@ export default defineComponent({
           console.log("Response from Get Appointment:", this.getAppointment_me);
           console.log("Response from Get  Data:", this.GetDate_me);
           // Create a map to track unique Job_IDs
-          const jobIdMap = new Map();
+          let jobIdMap = new Map();
 
+          // Iterate through each event in this.getAppointment_me
           this.getAppointment_me.forEach((event) => {
-            if (!jobIdMap.has(event.Job_ID)) {
-              // Add the event to the map if the Job_ID is not yet encountered
-              jobIdMap.set(event.Job_ID, {
+            // Check if the start date already exists in jobIdMap
+            if (!jobIdMap.has(event.Appointment_date)) {
+              // Add the event to the map if the start date is not yet encountered
+              jobIdMap.set(event.Appointment_date, {
                 id: event.ID,
                 title: event.title,
                 start: event.Appointment_date,
@@ -271,10 +282,20 @@ export default defineComponent({
 
   methods: {
     handDataclick(computedEvent) {
-      const jobID = computedEvent.event.Job_ID;
-      console.log("Event clicked:", jobID);
+      let Petsa = computedEvent.event.start;
 
-      localStorage.setItem("jobID", jobID);
+      console.log("Event clicked:", Petsa);
+
+      const store = useMycalendar();
+      let data = new FormData();
+
+      data.append("CompanyID", this.userData.ID);
+      data.append("Date", Petsa);
+      store.SetCalendar_Events(data).then((res) => {
+        this.CalendarArray = store.Events_Calendar;
+        console.log("Calendar Events", this.CalendarArray);
+        localStorage.setItem("Calendar", JSON.stringify(this.CalendarArray));
+      });
     },
 
     getWeekEvents(week, weekdays) {
@@ -397,16 +418,20 @@ export default defineComponent({
       console.log("onChange", data);
     },
     onClickDate(data) {
-      console.log("onClickDate", data);
+      const DateClick = data.scope.timestamp.date;
+
+      console.log("on Click Date", DateClick);
     },
     onClickDay(data) {
-      console.log("onClickDay", data);
+      /*  console.log("onClickDay", data); */
     },
     onClickWorkweek(data) {
       console.log("onClickWorkweek", data);
     },
     onClickHeadDay(data) {
-      console.log("onClickHeadDay", data);
+      /*  console.log("onClickHeadDay", data);
+
+      console.log("onClickHeadDay 11", data.scope.timestamp.date); */
     },
     onClickHeadWorkweek(data) {
       console.log("onClickHeadWorkweek", data);

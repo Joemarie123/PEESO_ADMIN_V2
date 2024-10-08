@@ -45,14 +45,17 @@
                 <div
                   v-if="computedEvent.event && computedEvent.event.details"
                   class="title q-calendar__ellipsis"
-                 
+                  @click="handDataclick(computedEvent)"
                 >
-                  {{
-                    computedEvent.event.title +
-                    (computedEvent.event.time
-                      ? " - " + computedEvent.event.time
-                      : "")
-                  }}
+                  <q-badge style="background-color: green">
+                    {{
+                      "Scheduled Interview" +
+                      (computedEvent.event.time
+                        ? " - " + computedEvent.event.time
+                        : "")
+                    }}
+                  </q-badge>
+
                   <q-tooltip>{{ computedEvent.event.details }}</q-tooltip>
                 </div>
               </div>
@@ -201,9 +204,9 @@ export default defineComponent({
           const jobIdMap = new Map();
 
           this.getAppointment_me.forEach((event) => {
-            if (!jobIdMap.has(event.Job_ID)) {
+            if (!jobIdMap.has(event.Appointment_date)) {
               // Add the event to the map if the Job_ID is not yet encountered
-              jobIdMap.set(event.Job_ID, {
+              jobIdMap.set(event.Appointment_date, {
                 id: event.ID,
                 title: event.title,
                 start: event.Appointment_date,
@@ -254,6 +257,22 @@ export default defineComponent({
   },
 
   methods: {
+    /*  handDataclick(computedEvent) {
+      let Petsa = computedEvent.event.start;
+
+      console.log("Event clicked:", Petsa);
+
+      const store = useMycalendar();
+      let data = new FormData();
+
+      data.append("CompanyID", this.userData.ID);
+      data.append("Date", Petsa);
+      store.SetCalendar_Events(data).then((res) => {
+        this.CalendarArray = store.Events_Calendar;
+        console.log("Calendar Events", this.CalendarArray);
+        localStorage.setItem("Calendar", JSON.stringify(this.CalendarArray));
+      });
+    }, */
 
     setDateTime() {
       const date = new Date();

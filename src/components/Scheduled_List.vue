@@ -1,6 +1,5 @@
 <template>
   <div class="q-pa-md">
-
     <!--  <div class="row">
       <p>View All JOBS</p>
     </div> -->
@@ -18,8 +17,6 @@
           <!-- </q-tabs> -->
 
           <div class="q-gutter-y-sm">
-         
-
             <div style="margin-top: 38px">
               <div class="scrollable-container">
                 <div class="q-gutter-md">
@@ -49,7 +46,7 @@
                               class="text-subtitle2"
                               style="margin-top: -8px"
                             >
-                              Salary: ₱ {{ jobPost.salary }}
+                              <!--Confirm: {{ jobPost.totalconfirm }} -->
                             </div>
                             <!--    <div
                               v-for="data in GetDate_me"
@@ -100,7 +97,6 @@
 </template>
 
 <script>
-
 import { useDashBoard } from "src/stores/DashBoard_Store";
 import { useLoginCheck } from "src/stores/SignUp_Store";
 import { ref, onMounted } from "vue";
@@ -108,8 +104,6 @@ import axios from "axios";
 
 export default {
   name: "JobPostList",
-
-
 
   data() {
     return {
@@ -143,9 +137,7 @@ export default {
     };
   },
 
-  computed: {
-
-  },
+  computed: {},
 
   methods: {
     formatTime(time) {
@@ -257,6 +249,7 @@ export default {
                 end: event.Appointment_date,
                 details: event.Appointment_time,
                 salary: event.salary,
+                totalconfirm: event.totalconfirm,
                 pic: event.pic,
               });
             }

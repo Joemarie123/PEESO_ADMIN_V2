@@ -72,7 +72,7 @@
                 </q-item>
                 <q-separator></q-separator>
                 <q-item clickable class="GL__menu-link">
-                  <q-item-section @click="$router.push({ path: '/LoginPage' })"
+                  <q-item-section @click="handleSignOut"
                     >Sign out</q-item-section
                   >
                 </q-item>
@@ -288,6 +288,13 @@ export default defineComponent({
 
   components: {
     /*   EssentialLink, */
+  },
+
+  methods: {
+    handleSignOut() {
+      localStorage.removeItem("Calendar");
+      this.$router.push({ path: "/LoginPage" });
+    },
   },
 
   created() {

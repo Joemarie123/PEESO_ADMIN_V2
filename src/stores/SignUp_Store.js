@@ -8,6 +8,11 @@ export const useLoginCheck = defineStore("SignUpAccouteStore", {
     SaveData: [],
     RetrievedData: [],
     LogIn: [],
+    WE: [],
+    SH: [],
+    EB: [],
+    PI: [],
+    LD: [],
   }),
   getters: {
     // doubleCount: (state) => state.counter * 2,
@@ -45,6 +50,68 @@ export const useLoginCheck = defineStore("SignUpAccouteStore", {
       }
     },
 
+    //Work Experience
+    async WorkExperience_Data(payload) {
+      let res = await axios.post(
+        `http://10.0.1.26:82/peesoportal/pds/client/workexperience.php`,
+        payload
+      );
+      this.WE = res.data;
+      console.log("Work Experience =>", res.data);
+    },
+
+    //SKILLS_DATA
+    async SkillsData(payload) {
+      let res = await axios.post(
+        `http://10.0.1.26:82/peesoportal/pds/client/skills.php`,
+        payload
+      );
+      this.SH = res.data;
+      console.log("SkillsData => ", res.data);
+    },
+
+    //EDUCATIONAL_DATA
+    async EducationalData(payload) {
+      let res = await axios.post(
+        `http://10.0.1.26:82/peesoportal/pds/client/education.php`,
+        payload
+      );
+      this.EB = res.data;
+      console.log("EducationalData => ", res.data);
+    },
+
+    //PERSONAL_DATA
+    async PersonalData(payload) {
+      let res = await axios.post(
+        `http://10.0.1.26:82/peesoportal/pds/client/personaldata.php`,
+        payload
+      );
+      this.PI = res.data;
+      console.log("PersonalData=>", res.data.personalRecord);
+      /*   let data = new FormData();
+      data.append("LoginID", res.data.personalRecord.LoginID);
+      this.RetrievedData_function(data); */
+    },
+
+    //Work Experience
+    async WorkExperience_Data(payload) {
+      let res = await axios.post(
+        `http://10.0.1.26:82/peesoportal/pds/client/workexperience.php`,
+        payload
+      );
+      this.WE = res.data;
+      console.log("Work Experience =>", res.data);
+    },
+
+    //TRAININGS_DATA
+    async TrainingData(payload) {
+      let res = await axios.post(
+        `http://10.0.1.26:82/peesoportal/pds/client/trainings.php`,
+        payload
+      );
+      this.LD = res.data;
+      console.log("TrainingData => ", res.data);
+    },
     async Login_Store(payload) {
       // `http://10.0.1.26:82/HRPORTAL/login.php`
       let res = await axios.post(
