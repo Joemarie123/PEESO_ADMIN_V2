@@ -7,6 +7,7 @@ export const useDashBoard = defineStore("DashBoardStore", {
     GetAppointment_Array: [],
     appointment: [],
     PotentialApplicant: [],
+    DashBoardArray: [],
   }),
   getters: {
     // doubleCount: (state) => state.counter * 2,
@@ -19,6 +20,14 @@ export const useDashBoard = defineStore("DashBoardStore", {
       );
       this.Server_Date_TIme = res.data;
       /*   console.log("GET SERVER DATE TIME", res.data); */
+    },
+
+    async GetDashboard(payload) {
+      let res = await axios.post(
+        `http://10.0.1.26:82/peesoportal/dashboard/admin/dashboard.php`,
+        payload
+      );
+      this.DashBoardArray = res.data;
     },
 
     async GetAppointment_Store(payload) {

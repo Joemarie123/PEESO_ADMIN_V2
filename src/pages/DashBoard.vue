@@ -242,6 +242,7 @@
 <script>
 import Schedule_Calendar from "../components/Schedule_Calendar.vue";
 import Scheduled_List from "../components/Scheduled_List.vue";
+import { useDashBoard } from "src/stores/DashBoard_Store";
 import AOS from "aos";
 import { ref } from "vue";
 import "aos/dist/aos.css";
@@ -270,11 +271,23 @@ export default {
       Server_year: "",
       Server_monthNumber: "",
       time: "",
+      ArrayDashboard: [],
     };
   },
   components: {
     Schedule_Calendar,
     Scheduled_List,
+  },
+
+  created() {
+    const store = useDashBoard();
+    let data = new FormData();
+    data.append("CompanyID", "41");
+
+    store.GetDashboard(data).then((res) => {
+      this.ArrayDashboard = store.DashBoardArray;
+      console.log("DashBoard Count", this.ArrayDashboard);
+    });
   },
 
   methods: {
