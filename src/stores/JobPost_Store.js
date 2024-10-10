@@ -10,6 +10,7 @@ export const useJobpost = defineStore("JobPostStore", {
     PotentialApplicant_Array: [],
     SetAppointment_Array: [],
     selectedJobId: null,
+    CloseJobs: [],
     /*  selectedJobID: 0,  */
   }),
   getters: {
@@ -25,6 +26,16 @@ export const useJobpost = defineStore("JobPostStore", {
     },
     clearSelectedJobId() {
       this.selectedJobId = null;
+    },
+
+    async Set_To_CloseJobs(payload) {
+      // `http://10.0.1.26:82/HRPORTAL/login.php`
+      let res = await axios.post(
+        `http://10.0.1.26:82/peesoportal/jobs/admin/setjobstatus.php`,
+        payload
+      );
+      this.CloseJobs = res.data;
+      console.log("Set Close Jobs Store", res.data);
     },
 
     async Set_Appointment_Store(payload) {

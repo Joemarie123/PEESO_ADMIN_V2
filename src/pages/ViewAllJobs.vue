@@ -102,15 +102,26 @@
                       ]"
                       @click="handleRowClick(jobPost)"
                     >
-                      <div class="row">
-                        <div class="q-mx-lg col-12">
+                      <div class="row" style="margin-top: 10px">
+                        <div class="q-mx-lg col-1">
                           <q-icon
+                            v-if="jobPost.STATUS !== 'CLOSED'"
                             size="xs"
                             @click.stop="clickto_Edit(jobPost)"
                             style="color: green"
                             name="edit"
                             class="input-icon"
                           />
+                        </div>
+                        <div class="q-mx-lg col-5">
+                          <q-btn
+                            @click.stop="Click_close(jobPost)"
+                            outline
+                            rounded
+                            color="red"
+                            size="sm"
+                            >Close Job</q-btn
+                          >
                         </div>
                       </div>
                       <div class="row">
@@ -253,6 +264,24 @@
                                 <span style="color: red">{{
                                   jobPost.totalrejected
                                 }}</span>
+                              </div>
+
+                              <div
+                                class="text-h6"
+                                style="
+                                  font-size: 13px;
+                                  font-weight: 400;
+                                  margin-top: -10px;
+                                "
+                              >
+                                Status:
+                                <span
+                                  :class="{
+                                    'text-red': jobPost.STATUS == 'CLOSED',
+                                  }"
+                                >
+                                  {{ jobPost.STATUS }}
+                                </span>
                               </div>
 
                               <!--     <div
@@ -780,6 +809,7 @@ export default {
       Data_Retrieved: {
         data: [], // Ensure it's always an array, even if empty
       },
+      TransferArrayData_Retrived: "",
 
       users: [],
       page_1: 1,
@@ -795,6 +825,7 @@ export default {
       Pass_ApplicantID: "",
       Pass_title: "",
       allRecords: [], // Define the array to hold all the records
+      CloseJobsclick: "",
     };
   },
 
@@ -838,6 +869,28 @@ export default {
   },
 
   methods: {
+    Click_close(jobPost) {
+      console.log("Job Post Close", jobPost.ID);
+
+      const store = useJobpost();
+      let data = new FormData();
+      data.append("JobID", jobPost.ID);
+
+      store.Set_To_CloseJobs(data).then((res) => {
+        this.CloseJobsclick = store.CloseJobs;
+
+        const store1 = useJobpost();
+        let data1 = new FormData();
+        data1.append("CompanyID", this.userData.ID);
+        store1.Retrieve_Jobs(data1).then((res) => {
+          this.Data_Retrieved = store1.RetrieveJobs_Array;
+          console.log(" Database:", this.Data_Retrieved);
+        });
+        this.SuccessfullyClose();
+        console.log("CloseJobs", this.CloseJobsclick);
+      });
+    },
+
     Click_ViewDetails_potentian(potential) {
       console.log("Click Potential", potential);
 
@@ -1075,6 +1128,7 @@ export default {
           data1.append("CompanyID", this.userData.ID);
           store1.Retrieve_Jobs(data1).then((res) => {
             this.Data_Retrieved = store1.RetrieveJobs_Array;
+            /* this.TransferArrayData_Retrived = this.Data_Retrieved.data[0]; */
             console.log(" Database:", this.Data_Retrieved);
           });
         });
@@ -1392,6 +1446,16 @@ export default {
         });
       },
 
+      SuccessfullyClose() {
+        $q.notify({
+          icon: "star",
+          color: "red",
+          message: "Successfully Closed",
+          position: "center",
+          timeout: "1500",
+        });
+      },
+
       SuccessfullyDeclined() {
         $q.notify({
           icon: "star",
@@ -1417,6 +1481,10 @@ export default {
 </script>
 
 <style scoped>
+.text-red {
+  color: red;
+}
+
 .backgroundcolorbotton {
   background-color: #0d8209;
 }

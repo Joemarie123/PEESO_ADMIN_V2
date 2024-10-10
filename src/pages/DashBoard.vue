@@ -39,7 +39,9 @@
               <div class="col-3">
                 <q-card-section class="row items-center">
                   <div>
-                    <div class="text-h6 numbersize">231</div>
+                    <div class="text-h6 numbersize">
+                      {{ TransferArrayData.ActiveJobs }}
+                    </div>
                     <div
                       class="text-subtitle2 totalapplicant"
                       style="margin-top: -8px"
@@ -53,7 +55,9 @@
               <div class="col-3">
                 <q-card-section class="row items-center">
                   <div>
-                    <div class="text-h6 numbersize">554</div>
+                    <div class="text-h6 numbersize">
+                      {{ TransferArrayData.totaljobs }}
+                    </div>
                     <div
                       class="text-subtitle2 totalapplicant"
                       style="margin-top: -8px"
@@ -67,7 +71,9 @@
               <div class="col-3">
                 <q-card-section class="row items-center">
                   <div>
-                    <div class="text-h6 numbersize">23</div>
+                    <div class="text-h6 numbersize">
+                      {{ TransferArrayData.ClosedJobs }}
+                    </div>
                     <div
                       class="text-subtitle2 totalapplicant"
                       style="margin-top: -8px"
@@ -81,7 +87,9 @@
               <div class="col-3">
                 <q-card-section class="row items-center">
                   <div>
-                    <div class="text-h6 numbersize">145</div>
+                    <div class="text-h6 numbersize">
+                      {{ TransferArrayData.OverdueJobs }}
+                    </div>
                     <div
                       class="text-subtitle2 totalapplicant"
                       style="margin-top: -8px"
@@ -235,6 +243,7 @@
           <q-card class="scheduleinterview"><Scheduled_List /> </q-card>
         </div>
       </div>
+      <div class=""></div>
     </q-page-section>
   </q-page>
 </template>
@@ -243,6 +252,7 @@
 import Schedule_Calendar from "../components/Schedule_Calendar.vue";
 import Scheduled_List from "../components/Scheduled_List.vue";
 import { useDashBoard } from "src/stores/DashBoard_Store";
+import { useLoginCheck } from "src/stores/SignUp_Store";
 import AOS from "aos";
 import { ref } from "vue";
 import "aos/dist/aos.css";
@@ -271,7 +281,9 @@ export default {
       Server_year: "",
       Server_monthNumber: "",
       time: "",
+      retrievedLogin: "",
       ArrayDashboard: [],
+      TransferArrayData: [],
     };
   },
   components: {
@@ -280,13 +292,29 @@ export default {
   },
 
   created() {
-    const store = useDashBoard();
-    let data = new FormData();
-    data.append("CompanyID", "41");
+    this.retrievedLogin = localStorage.getItem("Login");
 
-    store.GetDashboard(data).then((res) => {
-      this.ArrayDashboard = store.DashBoardArray;
-      console.log("DashBoard Count", this.ArrayDashboard);
+    const store2 = useLoginCheck();
+    let data2 = new FormData();
+    data2.append("LoginID", this.retrievedLogin);
+
+    store2.RetrievedData_function(data2).then((res) => {
+      this.userinfo = store2.RetrievedData;
+
+      // Directly access the first element of the data array
+      this.userData = this.userinfo.data[0];
+
+      console.log("Data Retrieved:", this.userData);
+
+      const store = useDashBoard();
+      let data = new FormData();
+      data.append("CompanyID", this.userData.ID);
+
+      store.GetDashboard(data).then((res) => {
+        this.ArrayDashboard = store.DashBoardArray;
+        this.TransferArrayData = this.ArrayDashboard.data[0];
+        console.log("DashBoard Count", this.TransferArrayData);
+      });
     });
   },
 
